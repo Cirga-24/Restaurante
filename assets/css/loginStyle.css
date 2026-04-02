@@ -1,0 +1,143 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    text-decoration: none;
+    list-style: none;
+    font-family: sans-serif;
+    color: bisque;
+}
+
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: #1b1b1b;
+}
+
+.contenedor_todo {
+    width: 600px;
+    height: auto;
+    position: relative;
+    background-color: transparent;
+}
+
+.caja_trasera {
+    width: 100%;
+    padding: 10px 20px;
+    justify-content: center;
+    backdrop-filter: blur(10px);
+    transition: all 1s;
+}
+
+.caja_trasera_login {
+    width: 100%;
+    height: auto;
+    display: grid;
+    grid-template-rows: repeat(2, minmax(50px, auto));
+    justify-content: center;
+    align-items: center;
+    button {
+        margin: 0 auto;
+        padding: 10px 40px;
+        border: 2px solid #e2a637;
+        background: transparent;
+        font-size: 14px;
+        font-weight: 600px;
+        cursor: pointer;
+        color: white;
+        transition: all 200ms;
+    }
+}
+
+.logo_restaurante{
+    width: 80%;
+    border-radius: 5%;
+    padding: 25px 0;
+    margin: auto;
+}
+
+.caja_trasera button:hover {
+    background-color: #ffbb3d;
+    color: black;
+}
+
+/*formularios*/
+
+.contenedor_login {
+    /*Contenedor*/
+    position: absolute;
+    top: 0;
+    right: 0;
+    display: none;
+    width: 90%;
+    height: 400px;
+    transition: transform 0.5s;
+    opacity: 0;
+    background-color: rgb(255, 255, 255);
+    padding: 40px 20px;
+    border-radius: 20px;
+    /*Fuente*/
+    h2 {
+        font-size: 32px;
+        font-weight: 600px;
+        margin-bottom: 20px;
+        margin: 0 auto 20px auto;
+        color: #000000;
+    }
+    a {
+        margin: 0 auto;
+        font-size: 14px;
+        font-weight: 600px;
+        color: #0f526d;
+    }
+}
+
+.contenedor_login form {
+    margin: auto;
+    width: 100%;
+    display: grid;
+    grid-template-rows: repeat(3, 1fr);
+    input {
+        width: 50%;
+        margin: 0 auto 20px auto;
+        border: 2px solid #242424da;
+        background: transparent;
+        font-size: 14px;
+        font-weight: 600px;
+        color: black;
+        padding: 0 10px;
+    }
+}
+
+.contenedor_login button {
+    width: 50%;
+    margin: 0 auto 10px auto;
+    padding: 10px 40px;
+    background: black;
+    border: #1b1b1b;
+    font-size: 14px;
+    font-weight: 600px;
+    cursor: pointer;
+    color: white;
+    transition: all 200ms;
+}
+
+.contenedor_login button:hover {
+    background-color: #ffbb3d;
+    color: black;
+}
+
+/* Animaciones para el deslizamiento */
+.contenedor_todo.active .caja_trasera {
+    transform: scale(0%);
+    opacity: 0;
+}
+
+.contenedor_todo.active .contenedor_login {
+    transform: scale(100%);
+    opacity: 1;
+    display: grid;
+    grid-template-rows: minmax(50px, auto) minmax(50px, auto) minmax(50px, autoq);
+}
