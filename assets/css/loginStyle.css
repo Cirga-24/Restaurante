@@ -16,6 +16,8 @@ body {
     background-color: #1b1b1b;
 }
 
+/*COntenedor fondo*/
+
 .contenedor_todo {
     width: 600px;
     height: auto;
@@ -38,17 +40,18 @@ body {
     grid-template-rows: repeat(2, minmax(50px, auto));
     justify-content: center;
     align-items: center;
-    button {
-        margin: 0 auto;
-        padding: 10px 40px;
-        border: 2px solid #e2a637;
-        background: transparent;
-        font-size: 14px;
-        font-weight: 600px;
-        cursor: pointer;
-        color: white;
-        transition: all 200ms;
-    }
+}
+
+.caja_trasera_login button {
+    margin: 0 auto;
+    padding: 10px 40px;
+    border: 2px solid #e2a637;
+    background: transparent;
+    font-size: 14px;
+    font-weight: 600px;
+    cursor: pointer;
+    color: white;
+    transition: all 200ms;
 }
 
 .logo_restaurante{
@@ -68,8 +71,9 @@ body {
 .contenedor_login {
     /*Contenedor*/
     position: absolute;
-    top: 0;
-    right: 0;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
     display: none;
     width: 90%;
     height: 400px;
@@ -85,12 +89,6 @@ body {
         margin-bottom: 20px;
         margin: 0 auto 20px auto;
         color: #000000;
-    }
-    a {
-        margin: 0 auto;
-        font-size: 14px;
-        font-weight: 600px;
-        color: #0f526d;
     }
 }
 
@@ -124,6 +122,12 @@ body {
     transition: all 200ms;
 }
 
+.contenedor_login #btn_forgotpassword {
+    background: transparent;
+    color: #0f526d;
+    text-decoration: underline;
+}
+
 .contenedor_login button:hover {
     background-color: #ffbb3d;
     color: black;
@@ -136,8 +140,55 @@ body {
 }
 
 .contenedor_todo.active .contenedor_login {
-    transform: scale(100%);
     opacity: 1;
     display: grid;
     grid-template-rows: minmax(50px, auto) minmax(50px, auto) minmax(50px, autoq);
+}
+
+
+/*Contenedor de recuperación de contraseña*/
+
+.contenedor_forgotpassword {
+    position: absolute;
+    display: none;
+    width: 90%;
+    height: 400px;
+    opacity: 0;
+    background-color: rgb(255, 255, 255);
+    padding: 40px 20px;
+    border-radius: 20px;
+    /*Fuente*/
+    h2 {
+        font-size: 32px;
+        font-weight: 600px;
+        margin: 10% auto ;
+        text-align: center;
+        color: #000000;
+    }
+    button 
+    {
+        width: 80%;
+        height: 60px;
+        margin: 0 auto 10px auto;
+        background: black;
+        border: #1b1b1b;
+        font-size: 20px;
+        font-weight: 600px;
+        cursor: pointer;
+        color: white;
+        transition: all 200ms;
+    }
+    button:hover {
+        background-color: #ffbb3d;
+        color: black;
+    }
+}
+
+.contenedor_forgotpassword.active {
+    transform: scale(100%);
+    opacity: 1;
+    grid-template-rows: 1fr 0.5fr;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
 }
