@@ -109,6 +109,11 @@ body {
     }
 }
 
+.contenedor_login p {
+    color: red;
+    text-align: center;
+}
+
 .contenedor_login button {
     width: 50%;
     margin: 0 auto 10px auto;
