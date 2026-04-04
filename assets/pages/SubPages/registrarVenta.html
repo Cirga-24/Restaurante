@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="../../css/registrarVenta.css" />
 </head>
 <body>
+    <!-- Menú Lateral -->
     <div class="menu_lateral">
         <div class="menu_header">
             <img src="../../img/LogoRestaurante.png" 
@@ -46,6 +47,8 @@
                 </li>
             </ul>
         </nav>
+
+
         <div class="menu_footer">
             <a href="#" class="menu_link logout">
                 <span class="menu_icon">🚪</span>
@@ -53,8 +56,119 @@
             </a>
         </div>
     </div>
+
+    <!-- Ventana de Venta -->
     <div class="card_principal">
+        <div class="venta_header">
+            <div class="fecha_container">
+                <span class="fecha_label">Fecha:</span>
+                <span class="fecha_valor" id="fechaActual"></span>
+            </div>
+        </div>
         
+        <div class="venta_form">
+            <div class="mesa_section">
+                <label for="tipoServicio">Tipo de Servicio:</label>
+                <select id="tipoServicio" class="tipo_servicio_select">
+                    <option value="">Seleccionar...</option>
+                    <option value="mesa1">Compra Local</option>
+                    <option value="domicilio">Domicilio</option>
+                </select>
+            </div>
+            <div class="mesa_section">
+                <label for="costo_domicilio">Costo de Domicilio:</label>
+                <input type="number" id="costo_domicilio" name="costo_domicilio" step="0.01" placeholder="Solo se puede en domicilio" disabled>
+            </div>
+        </div>
+        
+        <div class="venta_content">
+            <div class="productos_section">
+                <h3>Productos Disponibles</h3>
+                <div class="productos_search">
+                    <input type="text" id="buscarProducto" placeholder="Buscar producto..." class="search_input">
+                </div>
+                <div class="productos_lista" id="productosList">
+                    <div class="producto_item">
+                        <div class="producto_info">
+                            <span class="producto_nombre">Hamburguesa Clásica</span>
+                            <span class="producto_descripcion">Con queso y lechuga</span>
+                        </div>
+                        <span class="producto_precio">$12.50</span>
+                        <button class="btn_agregar" data-producto="Hamburguesa Clásica" data-precio="12.50">+</button>
+                    </div>
+                    
+                    <div class="producto_item">
+                        <div class="producto_info">
+                            <span class="producto_nombre">Pizza Margherita</span>
+                            <span class="producto_descripcion">Queso mozzarella y tomate</span>
+                        </div>
+                        <span class="producto_precio">$15.00</span>
+                        <button class="btn_agregar" data-producto="Pizza Margherita" data-precio="15.00">+</button>
+                    </div>
+                    
+                    <div class="producto_item">
+                        <div class="producto_info">
+                            <span class="producto_nombre">Ensalada César</span>
+                            <span class="producto_descripcion">Lechuga, crutones y aderezo</span>
+                        </div>
+                        <span class="producto_precio">$9.99</span>
+                        <button class="btn_agregar" data-producto="Ensalada César" data-precio="9.99">+</button>
+                    </div>
+                    
+                    <div class="producto_item">
+                        <div class="producto_info">
+                            <span class="producto_nombre">Pasta Alfredo</span>
+                            <span class="producto_descripcion">Fettuccine con salsa de crema</span>
+                        </div>
+                        <span class="producto_precio">$14.50</span>
+                        <button class="btn_agregar" data-producto="Pasta Alfredo" data-precio="14.50">+</button>
+                    </div>
+                    
+                    <div class="producto_item">
+                        <div class="producto_info">
+                            <span class="producto_nombre">Bebida Gaseosa</span>
+                            <span class="producto_descripcion">Varios sabores disponibles</span>
+                        </div>
+                        <span class="producto_precio">$2.50</span>
+                        <button class="btn_agregar" data-producto="Bebida Gaseosa" data-precio="2.50">+</button>
+                    </div>
+                    
+                    <div class="producto_item">
+                        <div class="producto_info">
+                            <span class="producto_nombre">Postre de Chocolate</span>
+                            <span class="producto_descripcion">Brownie con helado</span>
+                        </div>
+                        <span class="producto_precio">$7.99</span>
+                        <button class="btn_agregar" data-producto="Postre de Chocolate" data-precio="7.99">+</button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="carrito_section">
+                <h3>Resumen de Venta</h3>
+                <div class="carrito_items" id="carritoItems">
+                    <div class="carrito_vacio">
+                        <p>Ningún producto agregado</p>
+                    </div>
+                </div>
+                <div class="carrito_totales">
+                    <div class="total_row">
+                        <span>Subtotal:</span>
+                        <span id="subtotal">$0.00</span>
+                    </div>
+                    <div class="total_row">
+                        <span>Impuesto:</span>
+                        <span id="impuesto">$0.00</span>
+                    </div>
+                    <div class="total_row final">
+                        <span>Total:</span>
+                        <span id="total">$0.00</span>
+                    </div>
+                </div>
+                <button class="btn_completar">Completar Venta</button>
+                <button class="btn_limpiar">Limpiar Carrito</button>
+            </div>
+        </div>
     </div>
     <script type="module" src="../../js/registrarVenta.js"></script>
 </body>

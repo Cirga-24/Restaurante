@@ -8,94 +8,124 @@ const checkUser = () => {
 
 checkUser();
 
-const productoEl = document.getElementById('producto');
-const cantidadEl = document.getElementById('cantidad');
-const precioEl = document.getElementById('precio');
-const itemsLista = document.getElementById('itemsLista');
-const ventaTotal = document.getElementById('ventaTotal');
-const btnAgregar = document.getElementById('btnAgregar');
-const btnGuardar = document.getElementById('btnGuardar');
+const tipoServicio = document.getElementById('tipoServicio');
+const costoDomicilio = document.getElementById('costo_domicilio');
 
-const items = [];
+tipoServicio.addEventListener('change', function() {
+    if (this.value === 'domicilio') {
+        costoDomicilio.disabled = false;
+        costoDomicilio.placeholder = "Ingrese el costo del domicilio..."; 
+    } else {
+        costoDomicilio.disabled = true;
+        costoDomicilio.placeholder = "Solo se puede en domicilio";
+    }
+});
 
-function formatoDinero(valor) {
-    return '$' + Number(valor).toFixed(2);
-}
-
-function actualizarLista() {
-    itemsLista.innerHTML = '';
-    let totalVenta = 0;
-    items.forEach((item, index) => {
-        const fila = document.createElement('tr');
-        const subtotal = item.cantidad * item.precio;
-        totalVenta += subtotal;
-
-        fila.innerHTML = `
-            <td>${item.producto}</td>
-            <td>${item.cantidad}</td>
-            <td>${formatoDinero(item.precio)}</td>
-            <td>${formatoDinero(subtotal)}</td>
-            <td><button type="button" data-index="${index}">Eliminar</button></td>
-        `;
-
-        fila.querySelector('button').addEventListener('click', () => {
-            items.splice(index, 1);
-            actualizarLista();
+// Mostrar fecha actual
+        const fechaActual = new Date();
+        const opciones = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+        document.getElementById('fechaActual').textContent = fechaActual.toLocaleDateString('es-ES', opciones);
+        
+        // Almacenar carrito en memoria
+        let carrito = [];
+        
+        // Agregar eventos a botones de agregar
+        document.querySelectorAll('.btn_agregar').forEach(button => {
+            button.addEventListener('click', function() {
+                const producto = this.dataset.producto;
+                const precio = parseFloat(this.dataset.precio);
+                agregarAlCarrito(producto, precio);
+            });
         });
+        
+        function agregarAlCarrito(producto, precio) {
+            const itemExistente = carrito.find(item => item.nombre === producto);
+            
+            if (itemExistente) {
+                itemExistente.cantidad++;
+            } else {
+                carrito.push({ nombre: producto, precio: precio, cantidad: 1 });
+            }
+            
+            actualizarCarrito();
+        }
+        
+        function actualizarCarrito() {
+            const carritoItems = document.getElementById('carritoItems');
+            
+            if (carrito.length === 0) {
+                carritoItems.innerHTML = '<div class="carrito_vacio"><p>Ningún producto agregado</p></div>';
+                actualizarTotales();
+                return;
+            }
+            
+            let html = '';
+            carrito.forEach((item, index) => {
+                html += `
+                    <div class="carrito_item">
+                        <div class="item_info">
+                            <span class="item_nombre">${item.nombre}</span>
+                            <span class="item_cantidad">Cant: ${item.cantidad}</span>
+                        </div>
+                        <span class="item_subtotal">$${(item.precio * item.cantidad).toFixed(2)}</span>
+                        <button class="btn_eliminar" data-index="${index}">✕</button>
+                    </div>
+                `;
+            });
+            
+            carritoItems.innerHTML = html;
+            
+            document.querySelectorAll('.btn_eliminar').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const index = this.getAttribute('data-index');
+                    eliminarDelCarrito(index);
+                });
+            });
 
-        itemsLista.appendChild(fila);
-    });
-    ventaTotal.textContent = formatoDinero(totalVenta);
-}
-
-btnAgregar.addEventListener('click', () => {
-    const producto = productoEl.value;
-    const cantidad = Number(cantidadEl.value);
-    const precio = Number(precioEl.value);
-
-    if (!producto) {
-        alert('Selecciona un producto.');
-        return;
-    }
-    if (cantidad < 1 || precio <= 0) {
-        alert('Ingresa cantidad y precio válidos.');
-        return;
-    }
-
-    items.push({ producto, cantidad, precio });
-    actualizarLista();
-    cantidadEl.value = '1';
-    precioEl.value = '0.00';
-    productoEl.value = '';
-});
-
-btnGuardar.addEventListener('click', () => {
-    if (items.length === 0) {
-        alert('Agrega al menos un producto.');
-        return;
-    }
-    const cliente = document.getElementById('cliente').value.trim();
-    const vendedor = document.getElementById('vendedor').value.trim();
-    const fecha = document.getElementById('fecha').value;
-    if (!cliente || !vendedor || !fecha) {
-        alert('Completa los datos del cliente, vendedor y fecha.');
-        return;
-    }
-
-    const venta = {
-        cliente,
-        vendedor,
-        fecha,
-        items,
-        total: items.reduce((sum, item) => sum + item.cantidad * item.precio, 0)
-    };
-
-    console.log('Venta registrada:', venta);
-    alert('Venta registrada correctamente. Revisa la consola para verificar.');
-    items.length = 0;
-    actualizarLista();
-    document.getElementById('cliente').value = '';
-    document.getElementById('vendedor').value = '';
-});
-
-document.getElementById("fecha").textContent = new Date().toISOString().split('T')[0];
+            actualizarTotales();
+        }
+        
+        function eliminarDelCarrito(index) {
+            carrito.splice(index, 1);
+            actualizarCarrito();
+        }
+        
+        function actualizarTotales() {
+            const subtotal = carrito.reduce((sum, item) => sum + (item.precio * item.cantidad), 0);
+            const impuesto = subtotal * 0.08; // 8% de impuesto
+            const total = subtotal + impuesto;
+            
+            document.getElementById('subtotal').textContent = '$' + subtotal.toFixed(2);
+            document.getElementById('impuesto').textContent = '$' + impuesto.toFixed(2);
+            document.getElementById('total').textContent = '$' + total.toFixed(2);
+        }
+        
+        // Botones de acción
+        document.querySelector('.btn_limpiar').addEventListener('click', function() {
+            carrito = [];
+            actualizarCarrito();
+        });
+        
+        document.querySelector('.btn_completar').addEventListener('click', function() {
+            if (carrito.length === 0) {
+                alert('Por favor, agregue al menos un producto');
+                return;
+            } else if (document.getElementById('tipoServicio').value === '') {
+                alert('Por favor, seleccione un tipo de servicio');
+                return;
+            } else if (document.getElementById('tipoServicio').value === 'Domicilio' && document.getElementById('costo_domicilio').value === '') {
+                alert('Por favor, ingrese el costo de domicilio');
+                return;
+            }
+            alert('Venta completada. Total: ' + document.getElementById('total').textContent);
+        });
+        
+        // Búsqueda de productos
+        document.getElementById('buscarProducto').addEventListener('input', function(e) {
+            const busqueda = e.target.value.toLowerCase();
+            document.querySelectorAll('.producto_item').forEach(item => {
+                const nombre = item.querySelector('.producto_nombre').textContent.toLowerCase();
+                const descripcion = item.querySelector('.producto_descripcion').textContent.toLowerCase();
+                item.style.display = nombre.includes(busqueda) || descripcion.includes(busqueda) ? 'flex' : 'none';
+            });
+        });
