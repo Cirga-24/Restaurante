@@ -94,7 +94,18 @@ function agregarAlCarrito(producto, precio) {
     } else {
         carrito.push({ nombre: producto, precio: precio, cantidad: 1 });
     }
-    
+
+    //LIMPIAR BÚSQUEDA
+    document.getElementById('buscarProducto').value = '';
+
+    //LIMPIAR CATEGORÍA
+    document.getElementById('filtroCategoria').value = '';
+
+    //MOSTRAR TODOS LOS PRODUCTOS
+    document.querySelectorAll('.producto_item').forEach(item => {
+        item.style.display = 'flex';
+    });
+
     actualizarCarrito();
 }
 
@@ -186,14 +197,6 @@ document.querySelector('.btn_completar').addEventListener('click', function() {
 });
 
 // Búsqueda de productos
-document.getElementById('buscarProducto').addEventListener('input', function(e) {
-    const busqueda = e.target.value.toLowerCase();
-    document.querySelectorAll('.producto_item').forEach(item => {
-        const nombre = item.querySelector('.producto_nombre').textContent.toLowerCase();
-        const descripcion = item.querySelector('.producto_descripcion').textContent.toLowerCase();
-        item.style.display = nombre.includes(busqueda) || descripcion.includes(busqueda) ? 'flex' : 'none';
-    });
-});
 
 const filtroCategoria = document.getElementById('filtroCategoria');
 
