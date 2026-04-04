@@ -31,17 +31,28 @@ document.getElementById('btn_ingresar').addEventListener('click', async function
     e.preventDefault();
     var username = document.getElementById('usuario').value.trim();
     var password = document.getElementById('password').value.trim();
+    const alertText = document.getElementById('alertText');
 
-    if(username == "" || password == "") 
+    if(username == "" && password == "") 
     {
-        document.getElementById('alertText').textContent = 'Por favor, complete todos los campos.';
+        alertText.textContent = 'Por favor, complete todos los campos.';
+        setTimeout(() => {
+            alertText.textContent = '';
+        }, 3000);
+        return;
+    } else if (password == "") {
+        alertText.textContent = 'Por favor, ingrese su contraseña.';
+        setTimeout(() => {
+            alertText.textContent = '';
+        }, 3000);
+        return;
+    } else if (username == "") {
+        alertText.textContent = 'Por favor, ingrese su nombre de usuario.';
         setTimeout(() => {
             alertText.textContent = '';
         }, 3000);
         return;
     };
-
-    const alertText = document.getElementById('alertText');
 
 try {
     const { data, error } = await supabase
@@ -53,14 +64,20 @@ try {
 console.log("Usuario encontrado:", data);
 
     if (!data) {
-    alertText.textContent = 'Usuario no existe';
-    return;
+        alertText.textContent = 'Usuario no existe';
+        setTimeout(() => {
+            alertText.textContent = '';
+        }, 3000);
+        return;
     }
 
     // Comparación manual
     if (data.password !== password) {
-    alertText.textContent = 'Contraseña incorrecta';
-    return;
+        alertText.textContent = 'Contraseña incorrecta';
+        setTimeout(() => {
+            alertText.textContent = '';
+        }, 3000);
+        return;
     }
 
     // Guardar usuario en sesión
