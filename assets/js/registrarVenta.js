@@ -194,3 +194,44 @@ document.getElementById('buscarProducto').addEventListener('input', function(e) 
         item.style.display = nombre.includes(busqueda) || descripcion.includes(busqueda) ? 'flex' : 'none';
     });
 });
+
+const filtroCategoria = document.getElementById('filtroCategoria');
+
+const categorias = ['hamburguesas', 'pizzas', 'ensaladas', 'pastas', 'bebidas', 'postres'];
+
+categorias.forEach(cat => {
+    const option = document.createElement('option');
+    option.value = cat;
+    option.textContent = cat.charAt(0).toUpperCase() + cat.slice(1);
+    filtroCategoria.appendChild(option);
+});
+
+filtroCategoria.addEventListener('change', function() {
+    const categoria = this.value;
+
+    document.querySelectorAll('.producto_item').forEach(item => {
+        const itemCategoria = item.getAttribute('data-categoria');
+
+        if (!categoria || itemCategoria === categoria) {
+            item.style.display = 'flex';
+        } else {
+            item.style.display = 'none';
+        }
+    });
+});
+
+document.getElementById('buscarProducto').addEventListener('input', function(e) {
+    const busqueda = e.target.value.toLowerCase();
+    const categoria = filtroCategoria.value;
+
+    document.querySelectorAll('.producto_item').forEach(item => {
+        const nombre = item.querySelector('.producto_nombre').textContent.toLowerCase();
+        const descripcion = item.querySelector('.producto_descripcion').textContent.toLowerCase();
+        const itemCategoria = item.getAttribute('data-categoria');
+
+        const coincideBusqueda = nombre.includes(busqueda) || descripcion.includes(busqueda);
+        const coincideCategoria = !categoria || itemCategoria === categoria;
+
+        item.style.display = (coincideBusqueda && coincideCategoria) ? 'flex' : 'none';
+    });
+});
