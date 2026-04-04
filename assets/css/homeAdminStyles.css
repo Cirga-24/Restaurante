@@ -1,0 +1,78 @@
+body {
+    font-family: Arial, sans-serif;
+    background: #f4f7fb;
+    color: #333;
+    margin: 0;
+    padding: 0;
+}
+.page {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 24px;
+}
+.card {
+    background: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+    padding: 24px;
+    margin-bottom: 20px;
+}
+h1 {
+    margin-bottom: 16px;
+    color: #1e3a8a;
+}
+label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+}
+.grid {
+    display: grid;
+    gap: 16px;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+}
+input, select {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid #ccd6f6;
+    border-radius: 8px;
+    background: #fdfdff;
+    font-size: 1rem;
+}
+button {
+    border: none;
+    padding: 12px 18px;
+    border-radius: 10px;
+    cursor: pointer;
+    font-weight: 700;
+    background: #2563eb;
+    color: #fff;
+    transition: background 0.2s ease;
+}
+button:hover {
+    background: #1d4ed8;
+}
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 16px;
+}
+th, td {
+    padding: 12px 10px;
+    border-bottom: 1px solid #e5e7eb;
+    text-align: left;
+}
+th {
+    background: #eef2ff;
+    color: #1d4ed8;
+}
+.text-right { text-align: right; }
+.total-row td {
+    font-weight: 700;
+    border-top: 2px solid #c7d2fe;
+}
+.actions {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+}

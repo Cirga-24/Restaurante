@@ -7,3 +7,10 @@ const checkUser = () => {
 };
 
 checkUser();
+
+
+document.getElementById('btn_registrar_venta').addEventListener('click', (e) => { 
+    e.preventDefault();
+    alert('Redirigiendo a registrar venta...');
+    window.location.href = 'SubPages/registrarVenta.html';
+});
