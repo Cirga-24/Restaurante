@@ -329,6 +329,8 @@ th {
 
 .productos_search {
     margin-bottom: 16px;
+    display: grid;
+    gap: 8px;
 }
 
 .search_input {
@@ -353,6 +355,7 @@ th {
 }
 
 .producto_item {
+    width: 90%;
     display: flex;
     align-items: center;
     gap: 12px;
@@ -408,12 +411,17 @@ th {
     flex-shrink: 0;
 }
 
-.btn_agregar:hover {
+.btn_agregar:disabled {
+    background: #9ca3af7c;
+    cursor: not-allowed;
+}
+
+.btn_agregar:not(:disabled):hover {
     background: #1d4ed8;
     transform: scale(1.1);
 }
 
-.btn_agregar:active {
+.btn_agregar:not(:disabled):active {
     transform: scale(0.95);
 }
 
@@ -473,16 +481,24 @@ th {
     text-align: right;
 }
 
-#servicio {
-    right: 0;
-    width: 30%;
-}
-
 .btn_eliminar {
     width: 28px;
     height: 28px;
     padding: 0;
     background: #ef4444;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: all 0.2s ease;
+}
+
+.btn_add {
+    width: 28px;
+    height: 28px;
+    padding: 0;
+    background: #10b981;
     color: white;
     border: none;
     border-radius: 6px;
@@ -557,13 +573,21 @@ th {
 }
 
 @media (max-width: 768px) {
+    .menu_lateral {
+        display: none;
+    }
+
     .card_principal {
-        margin-left: 10px;
-        margin-right: 10px;
+        width: 90%;
+        margin: 20px;
     }
     
     .venta_header {
-        justify-content: flex-start;
+        justify-content: center;
+    }
+
+    .venta_form {
+        grid-template-columns: 1fr;
     }
     
     .productos_lista,

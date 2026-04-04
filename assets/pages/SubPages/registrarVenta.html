@@ -71,13 +71,13 @@
                 <label for="tipoServicio">Tipo de Servicio:</label>
                 <select id="tipoServicio" class="tipo_servicio_select">
                     <option value="">Seleccionar...</option>
-                    <option value="mesa1">Compra Local</option>
+                    <option value="compraLocal">Compra Local</option>
                     <option value="domicilio">Domicilio</option>
                 </select>
             </div>
             <div class="mesa_section">
                 <label for="costo_domicilio">Costo de Domicilio:</label>
-                <input type="number" id="costo_domicilio" name="costo_domicilio" step="0.01" placeholder="Solo se puede en domicilio" disabled>
+                <input type="number" id="costo_domicilio" name="costo_domicilio" step="50" min="50" placeholder="Solo se puede en domicilio" disabled>
             </div>
         </div>
         
@@ -85,6 +85,9 @@
             <div class="productos_section">
                 <h3>Productos Disponibles</h3>
                 <div class="productos_search">
+                    <select id="filtroCategoria" class="search_input">
+                        <option value="">Todas las categorías</option>
+                    </select>
                     <input type="text" id="buscarProducto" placeholder="Buscar producto..." class="search_input">
                 </div>
                 <div class="productos_lista" id="productosList">
@@ -156,13 +159,17 @@
                         <span>Subtotal:</span>
                         <span id="subtotal">$0.00</span>
                     </div>
-                    <div class="total_row">
-                        <span>Impuesto:</span>
-                        <span id="impuesto">$0.00</span>
+                    <div class="total_row" id="servicio_row">
+                        <span>Servicio a la mesa:</span>
+                        <span id="servicio">$3000.00</span>
+                    </div>
+                    <div class="total_row" id="domicilio_row">
+                        <span>Domicilio:</span>
+                        <span id="total_domicilio">$0.00</span>
                     </div>
                     <div class="total_row final">
                         <span>Total:</span>
-                        <span id="total">$0.00</span>
+                        <span id="total">$3000.00</span>
                     </div>
                 </div>
                 <button class="btn_completar">Completar Venta</button>
