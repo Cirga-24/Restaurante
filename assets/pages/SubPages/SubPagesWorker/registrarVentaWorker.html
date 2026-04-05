@@ -4,62 +4,15 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Crear Venta</title>
-    <link rel="stylesheet" href="../../css/registrarVenta.css" />
+    <link rel="stylesheet" href="../../../css/registrarVentaStyles.css" />
 </head>
 <body>
-    <!-- Menú Lateral -->
-    <div class="menu_lateral">
-        <div class="menu_header">
-            <img src="../../img/LogoRestaurante.png" 
-                alt="LogoRestaurante" class="menu_logo" style="height: auto; width: 70%; margin: auto;"/>
-        </div>
-        <nav class="menu_nav">
-            <ul class="menu_list">
-                <li class="menu_item">
-                    <a href="#" class="menu_link active">
-                        <span class="menu_icon">📊</span>
-                        <span class="menu_text">Registrar Ventas</span>
-                    </a>
-                </li>
-                <li class="menu_item">
-                    <a href="#" class="menu_link">
-                        <span class="menu_icon">👥</span>
-                        <span class="menu_text">Empleados</span>
-                    </a>
-                </li>
-                <li class="menu_item">
-                    <a href="#" class="menu_link">
-                        <span class="menu_icon">📦</span>
-                        <span class="menu_text">Ver Stock</span>
-                    </a>
-                </li>
-                <li class="menu_item">
-                    <a href="#" class="menu_link">
-                        <span class="menu_icon">📈</span>
-                        <span class="menu_text">Reportes</span>
-                    </a>
-                </li>
-                <li class="menu_item">
-                    <a href="#" class="menu_link">
-                        <span class="menu_icon">⚙️</span>
-                        <span class="menu_text">Configurar</span>
-                    </a>
-                </li>
-            </ul>
-        </nav>
-
-
-        <div class="menu_footer">
-            <a href="#" class="menu_link logout">
-                <span class="menu_icon">🚪</span>
-                <span class="menu_text">Cerrar Sesión</span>
-            </a>
-        </div>
-    </div>
-
     <!-- Ventana de Venta -->
     <div class="card_principal">
         <div class="venta_header">
+            <div class="volver_container">
+                <button id="btn_volver">←</button>
+            </div>
             <div class="fecha_container">
                 <span class="fecha_label">Fecha:</span>
                 <span class="fecha_valor" id="fechaActual"></span>
@@ -186,6 +139,6 @@
             </div>
         </div>
     </div>
-    <script type="module" src="../../js/registrarVenta.js"></script>
+    <script type="module" src="../../../js/registrarVenta.js"></script>
 </body>
 </html>

@@ -5,7 +5,6 @@
     text-decoration: none;
     list-style: none;
     font-family: sans-serif;
-    color: bisque;
 }
 
 body {
@@ -29,7 +28,6 @@ body {
     width: 100%;
     padding: 10px 20px;
     justify-content: center;
-    backdrop-filter: blur(10px);
     transition: all 1s;
 }
 
@@ -196,4 +194,38 @@ body {
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
+}
+
+@media (max-width: 768px) {
+    .logo_restaurante {
+        width: 50%;
+    }
+
+    .contenedor_todo {
+        width: 100%;
+    }
+
+    .contenedor_login {
+        width: 90%;
+        height: auto;
+        padding: 20px;
+    }
+
+    #form_login {
+        input {
+            width: 70%;
+        }
+        button {
+            width: 70%;
+        }
+    }
+
+    #btn_forgotpassword {
+        width: 70%;
+        padding: 20px 0;
+    }
+
+    .contenedor_forgotpassword.active h2 {
+        font-size: 24px;
+    }
 }

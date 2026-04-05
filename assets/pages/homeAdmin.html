@@ -15,10 +15,29 @@
     <body>
         <main>
             <div class="contenedor">
-                <h1>Bienvenido, Administrador</h1>
+                <h1 id="saludo">Bienvenido, Administrador</h1>
+                <hr class="separation"></hr>
                 <div class="opciones">
-                    <button id="btn_gestionar_empleados">Gestionar Empleados</button>
-                    <button id="btn_registrar_venta">Registrar Venta</button>
+                    <section class="option" data-url="SubPages/SubPagesAdmin/registrarVentaAdmin.html">
+                        <h2>Registrar Venta</h2>
+                        <p>Ingrese a esta seccion para agregar una nueva venta</p>
+                    </section>
+                    <section class="option" data-url="SubPages/SubPagesAdmin/adminUsuarios.html">
+                        <h2>Gestión de Empleados (meseros)</h2>
+                        <p>Ingrese a esta seccion para administrar los usuarios</p>
+                    </section>
+                    <section class="option" data-url="SubPages/SubPagesAdmin/adminProductos.html">
+                        <h2>Gestión de Productos</h2>
+                        <p>Ingrese a esta seccion para administrar los productos</p>
+                    </section>
+                    <section class="option" data-url="SubPages/SubPagesAdmin/adminPedidos.html">
+                        <h2>Gestión de Pedidos</h2>
+                        <p>Ingrese a esta seccion para administrar los pedidos</p>
+                    </section>
+                    <section class="option logout" data-url="../../index.html">
+                        <h2>Cerrar Sesión</h2>
+                        <p>De click para cerrar la sesión</p>
+                    </section>
                 </div>
             </div>
         </main>

@@ -1,0 +1,38 @@
+<!DOCTYPE <html>
+    <html lang="en">
+    <head>
+        <script>
+        const usuario = localStorage.getItem("usuario");
+        if (!usuario) {
+            window.location.href = "../../index.html";
+        }
+        </script>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Home Worker</title>
+        <link rel="stylesheet" href="../css/homeWorkerStyles.css" />
+    </head>
+    <body>
+        <main>
+            <div class="contenedor">
+                <h1 id="saludo">Bienvenido, Trabajador</h1>
+                <hr class="separation"></hr>
+                <div class="opciones">
+                    <section class="option" data-url="SubPages/SubPagesWorker/registrarVentaWorker.html">
+                        <h2>Registrar Venta</h2>
+                        <p>Ingrese a esta seccion para agregar una nueva venta</p>
+                    </section>
+                    <section class="option" data-url="SubPages/SubPagesWorker/workerInfoPersonal.html">
+                        <h2>Información Personal</h2>
+                        <p>Ingrese a esta seccion para su información personal</p>
+                    </section>
+                    <section class="option logout" data-url="../../index.html">
+                        <h2>Cerrar Sesión</h2>
+                        <p>De click para cerrar la sesión</p>
+                    </section>
+                </div>
+            </div>
+        </main>
+        <script type="module" src="../js/homeWorkerScripts.js"></script>
+    </body>
+</html>

@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Crear Venta</title>
+    <link rel="stylesheet" href="../../../css/registrarVentaStyles.css" />
+</head>
+<body>
+    <!-- Menú Lateral -->
+    <div class="menu_lateral">
+        <div class="menu_header">
+            <img src="../../../img/LogoRestaurante.png" 
+                alt="LogoRestaurante" class="menu_logo" style="height: auto; width: 70%; margin: auto;"/>
+        </div>
+        <nav class="menu_nav">
+            <ul class="menu_list">
+                <li class="menu_item">
+                    <a href="#" class="menu_link active">
+                        <span class="menu_icon">📊</span>
+                        <span class="menu_text">Registrar Ventas</span>
+                    </a>
+                </li>
+                <li class="menu_item">
+                    <a href="#" class="menu_link">
+                        <span class="menu_icon">👥</span>
+                        <span class="menu_text">Meseros</span>
+                    </a>
+                </li>
+                <li class="menu_item">
+                    <a href="#" class="menu_link">
+                        <span class="menu_icon">📦</span>
+                        <span class="menu_text">Productos</span>
+                    </a>
+                </li>
+                <li class="menu_item">
+                    <a href="#" class="menu_link">
+                        <span class="menu_icon">📈</span>
+                        <span class="menu_text">Reportes</span>
+                    </a>
+                </li>
+                <li class="menu_item">
+                    <a id="btn_volver" href="../../homeAdmin.html" class="menu_link">
+                        <span class="menu_icon">↩️</span>
+                        <span class="menu_text">Volver</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+
+
+        <div class="menu_footer">
+            <a id="cerrarSesion" class="menu_link logout">
+                <span class="menu_icon">🚪</span>
+                <span class="menu_text">Cerrar Sesión</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- Ventana de Venta -->
+    <div class="card_principal">
+        <div class="venta_header">
+            <div class="fecha_container">
+                <span class="fecha_label">Fecha:</span>
+                <span class="fecha_valor" id="fechaActual"></span>
+            </div>
+        </div>
+        
+        <div class="venta_form">
+            <div class="mesa_section">
+                <label for="tipoServicio">Tipo de Servicio:</label>
+                <select id="tipoServicio" class="tipo_servicio_select">
+                    <option value="">Seleccionar...</option>
+                    <option value="compraLocal">Compra Local</option>
+                    <option value="domicilio">Domicilio</option>
+                </select>
+            </div>
+            <div class="mesa_section">
+                <label for="costo_domicilio">Costo de Domicilio:</label>
+                <input type="number" id="costo_domicilio" name="costo_domicilio" step="50" min="50" placeholder="Solo se puede en domicilio" disabled>
+            </div>
+        </div>
+        
+        <div class="venta_content">
+            <div class="productos_section">
+                <h3>Productos Disponibles</h3>
+                <div class="productos_search">
+                    <select id="filtroCategoria" class="search_input">
+                        <option value="">Todas las categorías</option>
+                    </select>
+                    <input type="text" id="buscarProducto" placeholder="Buscar producto..." class="search_input">
+                </div>
+                <div class="productos_lista" id="productosList">
+                    <div class="producto_item" data-categoria="hamburguesas">
+                        <div class="producto_info">
+                            <span class="producto_nombre">Hamburguesa Clásica</span>
+                            <span class="producto_descripcion">Con queso y lechuga</span>
+                        </div>
+                        <span class="producto_precio">$16000.00</span>
+                        <button class="btn_agregar" data-producto="Hamburguesa Clásica" data-precio="16000.00" >+</button>
+                    </div>
+                    
+                    <div class="producto_item" data-categoria="pizzas">
+                        <div class="producto_info">
+                            <span class="producto_nombre">Pizza Margherita</span>
+                            <span class="producto_descripcion">Queso mozzarella y tomate</span>
+                        </div>
+                        <span class="producto_precio">$15000.00</span>
+                        <button class="btn_agregar" data-producto="Pizza Margherita" data-precio="15000.00" >+</button>
+                    </div>
+                    
+                    <div class="producto_item" data-categoria="ensaladas">
+                        <div class="producto_info">
+                            <span class="producto_nombre">Ensalada César</span>
+                            <span class="producto_descripcion">Lechuga, crutones y aderezo</span>
+                        </div>
+                        <span class="producto_precio">$19000.00</span>
+                        <button class="btn_agregar" data-producto="Ensalada César" data-precio="19000.00">+</button>
+                    </div>
+                    
+                    <div class="producto_item" data-categoria="pastas">
+                        <div class="producto_info">
+                            <span class="producto_nombre">Pasta Alfredo</span>
+                            <span class="producto_descripcion">Fettuccine con salsa de crema</span>
+                        </div>
+                        <span class="producto_precio">$14500.00</span>
+                        <button class="btn_agregar" data-producto="Pasta Alfredo" data-precio="14500.00" >+</button>
+                    </div>
+                    
+                    <div class="producto_item" data-categoria="bebidas">
+                        <div class="producto_info">
+                            <span class="producto_nombre">Manzana Postobon</span>
+                            <span class="producto_descripcion">Varios sabores disponibles</span>
+                        </div>
+                        <span class="producto_precio">$5000.00</span>
+                        <button class="btn_agregar" data-producto="Manzana Postobon" data-precio="5000.00">+</button>
+                    </div>
+
+                    <div class="producto_item" data-categoria="bebidas">
+                        <div class="producto_info">
+                            <span class="producto_nombre">Uva Postobon</span>
+                            <span class="producto_descripcion">Varios sabores disponibles</span>
+                        </div>
+                        <span class="producto_precio">$5000.00</span>
+                        <button class="btn_agregar" data-producto="Uva Postobon" data-precio="5000.00">+</button>
+                    </div>
+                    
+                    <div class="producto_item" data-categoria="postres">
+                        <div class="producto_info">
+                            <span class="producto_nombre">Postre de Chocolate</span>
+                            <span class="producto_descripcion">Brownie con helado</span>
+                        </div>
+                        <span class="producto_precio">$8000.00</span>
+                        <button class="btn_agregar" data-producto="Postre de Chocolate" data-precio="8000.00">+</button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="carrito_section">
+                <h3>Resumen de Venta</h3>
+                <div class="carrito_items" id="carritoItems">
+                    <div class="carrito_vacio">
+                        <p>Ningún producto agregado</p>
+                    </div>
+                </div>
+                <div class="carrito_totales">
+                    <div class="total_row">
+                        <span>Subtotal:</span>
+                        <span id="subtotal">$0.00</span>
+                    </div>
+                    <div class="total_row" id="servicio_row">
+                        <span>Servicio a la mesa:</span>
+                        <span id="servicio">$3000.00</span>
+                    </div>
+                    <div class="total_row" id="domicilio_row">
+                        <span>Domicilio:</span>
+                        <span id="total_domicilio">$0.00</span>
+                    </div>
+                    <div class="total_row final">
+                        <span>Total:</span>
+                        <span id="total">$3000.00</span>
+                    </div>
+                </div>
+                <button class="btn_completar">Completar Venta</button>
+                <button class="btn_limpiar">Limpiar Carrito</button>
+            </div>
+        </div>
+    </div>
+    <script type="module" src="../../../js/registrarVenta.js"></script>
+</body>
+</html>

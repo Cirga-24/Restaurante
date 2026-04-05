@@ -1,5 +1,7 @@
 import { supabase } from './supabaseConexion.js';
 
+localStorage.removeItem("usuario");
+
 // Boton para mostrar formulario de ingreso
 document.getElementById('btn_login').addEventListener('click', function() {
     document.querySelector('.contenedor_todo').classList.add('active');
@@ -27,7 +29,7 @@ document.getElementById('btn_cancelarforgot').addEventListener('click', function
 });
 
 //Boton para enviar formulario de ingreso
-document.getElementById('btn_ingresar').addEventListener('click', async function(e) {
+document.getElementById('form_login').addEventListener('submit', async function(e) {
     e.preventDefault();
     var username = document.getElementById('usuario').value.trim();
     var password = document.getElementById('password').value.trim();

@@ -1,13 +1,12 @@
 const checkUser = () => {
   const usuario = JSON.parse(localStorage.getItem("usuario"));
 
-  if (!usuario || !usuario.tipo_usuario) {
+  if (!usuario) {
     window.location.href = "../../index.html";
   }
 };
 
 checkUser();
-
 
 const tipoServicio = document.getElementById('tipoServicio');
 const costoDomicilio = document.getElementById('costo_domicilio');
@@ -127,7 +126,7 @@ function actualizarCarrito() {
                     <span class="item_cantidad">Cant: ${item.cantidad}</span>
                 </div>
                 <span class="item_subtotal">$${(item.precio * item.cantidad).toFixed(2)}</span>
-                <button class="btn_eliminar" data-index="${index}">x</button>
+                <button class="btn_eliminar" data-index="${index}">-</button>
                 <button class="btn_add" data-index="${index}" 
                     data-producto="${item.nombre}" data-precio="${item.precio}">+</button>
             </div>
@@ -155,7 +154,12 @@ function actualizarCarrito() {
 }
 
 function eliminarDelCarrito(index) {
-    carrito.splice(index, 1);
+    if (carrito[index].cantidad > 1) {
+        carrito[index].cantidad--;
+    } else {
+        carrito.splice(index, 1);
+    }
+
     actualizarCarrito();
 }
 
@@ -193,7 +197,14 @@ document.querySelector('.btn_completar').addEventListener('click', function() {
         alert('Por favor, ingrese el costo de domicilio');
         return;
     }
+    
+    const usuario = JSON.parse(localStorage.getItem("usuario"));
     alert('Venta completada. Total: ' + document.getElementById('total').textContent);
+    if (usuario.tipo_usuario) {
+        window.location.replace('/assets/pages/homeAdmin.html');
+    } else {
+        window.location.replace('/assets/pages/homeWorker.html');
+    }
 });
 
 // Búsqueda de productos
@@ -237,4 +248,26 @@ document.getElementById('buscarProducto').addEventListener('input', function(e) 
 
         item.style.display = (coincideBusqueda && coincideCategoria) ? 'flex' : 'none';
     });
+});
+
+//Boton Volver
+
+const volver = document.getElementById('btn_volver');
+
+volver.addEventListener('click', function() {
+    const usuario = JSON.parse(localStorage.getItem("usuario"));
+    if (usuario.tipo_usuario) {
+        window.location.replace('/assets/pages/homeAdmin.html');
+    } else {
+        window.location.replace('/assets/pages/homeWorker.html');
+    }
+});
+
+const cerrarSesion = document.getElementById('cerrarSesion');
+
+cerrarSesion.addEventListener('click', () => {
+    if (cerrarSesion.classList.contains('logout')) {
+        localStorage.removeItem("usuario");
+        window.location.replace('/index.html');
+    }
 });
