@@ -87,7 +87,7 @@ console.log("Usuario encontrado:", data);
 
     // Redirección según tipo
     if (data.tipo_usuario) {
-        window.location.replace('assets/pages/homeAdmin.html');
+        window.location.replace('assets/pages/Subpages/SubPagesAdmin/registrarVentaAdmin.html');
     } else {
         window.location.replace('assets/pages/homeWorker.html');
     }
