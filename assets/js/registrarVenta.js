@@ -59,11 +59,6 @@ servicio.addEventListener('change', function() {
     actualizarTotales();
 });
 
-// Mostrar fecha actual
-const fechaActual = new Date();
-const opciones = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-document.getElementById('fechaActual').textContent = fechaActual.toLocaleDateString('es-ES', opciones);
-
 // Almacenar carrito en memoria
 let carrito = [];
 
@@ -208,9 +203,7 @@ document.querySelector('.btn_completar').addEventListener('click', function() {
 });
 
 // Búsqueda de productos
-
 const filtroCategoria = document.getElementById('filtroCategoria');
-
 const categorias = ['hamburguesas', 'pizzas', 'ensaladas', 'pastas', 'bebidas', 'postres'];
 
 categorias.forEach(cat => {
@@ -251,23 +244,16 @@ document.getElementById('buscarProducto').addEventListener('input', function(e) 
 });
 
 //Boton Volver
-
-const volver = document.getElementById('btn_volver');
-
-volver.addEventListener('click', function() {
-    const usuario = JSON.parse(localStorage.getItem("usuario"));
-    if (usuario.tipo_usuario) {
-        window.location.replace('/assets/pages/homeAdmin.html');
-    } else {
-        window.location.replace('/assets/pages/homeWorker.html');
-    }
-});
-
-const cerrarSesion = document.getElementById('cerrarSesion');
-
-cerrarSesion.addEventListener('click', () => {
-    if (cerrarSesion.classList.contains('logout')) {
-        localStorage.removeItem("usuario");
-        window.location.replace('/index.html');
-    }
-});
+try {
+    const volver = document.getElementById('btn_volver');
+    volver.addEventListener('click', function() {
+        const usuario = JSON.parse(localStorage.getItem("usuario"));
+        if (usuario.tipo_usuario) {
+            window.location.replace('/assets/pages/homeAdmin.html');
+        } else {
+            window.location.replace('/assets/pages/homeWorker.html');
+        }
+    }); 
+} catch (error) {
+    console.error('No hay botón de volver disponible:');
+}

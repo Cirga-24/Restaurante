@@ -4,10 +4,11 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Crear Venta</title>
-    <link rel="stylesheet" href="../../../css/registrarVentaStyles.css" />
+    <link rel="stylesheet" href="../../../css/AdminStyles/registrarVentaStyles.css" />
+    <link rel="stylesheet" href="../../../css/menuLateralStyles.css" />
 </head>
 <body>
-    <!-- Menú Lateral -->
+<!-- Menú Lateral -->
     <div class="menu_lateral">
         <div class="menu_header">
             <img src="../../../img/LogoRestaurante.png" 
@@ -16,33 +17,40 @@
         <nav class="menu_nav">
             <ul class="menu_list">
                 <li class="menu_item">
-                    <a href="#" class="menu_link active">
+                    <a href="dashboardAdmin.html" class="menu_link">
+                        <span class="menu_icon">🏠</span>
+                        <span class="menu_text">Dashboard</span>
+                    </a>
+                </li>
+                <li class="menu_item">
+                    <a href="registrarVentaAdmin.html" class="menu_link active">
                         <span class="menu_icon">📊</span>
                         <span class="menu_text">Registrar Ventas</span>
                     </a>
                 </li>
                 <li class="menu_item">
-                    <a href="#" class="menu_link">
+                    <a href="adminUsuarios.html" class="menu_link">
                         <span class="menu_icon">👥</span>
                         <span class="menu_text">Meseros</span>
                     </a>
                 </li>
                 <li class="menu_item">
-                    <a href="#" class="menu_link">
+                    <a href="adminInventario.html" class="menu_link">
                         <span class="menu_icon">📦</span>
-                        <span class="menu_text">Productos</span>
+                        <span class="menu_text">Productos e Inventario</span>
+                    </a>
+                </li>
+                
+                <li class="menu_item">
+                    <a href="adminProveedores.html" class="menu_link">
+                        <span class="menu_icon">🚚</span>
+                        <span class="menu_text">Proveedores</span>
                     </a>
                 </li>
                 <li class="menu_item">
-                    <a href="#" class="menu_link">
+                    <a href="adminReportes.html" class="menu_link">
                         <span class="menu_icon">📈</span>
                         <span class="menu_text">Reportes</span>
-                    </a>
-                </li>
-                <li class="menu_item">
-                    <a id="btn_volver" href="../../homeAdmin.html" class="menu_link">
-                        <span class="menu_icon">↩️</span>
-                        <span class="menu_text">Volver</span>
                     </a>
                 </li>
             </ul>
@@ -187,5 +195,6 @@
         </div>
     </div>
     <script type="module" src="../../../js/registrarVenta.js"></script>
+    <script type="module" src="../../../js/globalScripts.js"></script>
 </body>
 </html>
