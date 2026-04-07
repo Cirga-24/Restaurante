@@ -144,7 +144,6 @@ document.querySelector('.btn_completar').addEventListener('click', function() {
     
     const usuario = JSON.parse(localStorage.getItem("usuario"));
     if (confirm('¿Quiere enviar el pedido?')) {
-        
         if (usuario.tipo_usuario) {
             window.location.replace('/assets/pages/homeAdmin.html');
         } else {
