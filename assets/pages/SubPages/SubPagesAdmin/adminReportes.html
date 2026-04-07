@@ -15,61 +15,7 @@
 </head>
 <body>
     <!-- Menú Lateral -->
-    <div class="menu_lateral">
-        <div class="menu_header">
-            <img src="../../../img/LogoRestaurante.png" 
-                alt="LogoRestaurante" class="menu_logo" style="height: auto; width: 70%; margin: auto;"/>
-        </div>
-        <nav class="menu_nav">
-            <ul class="menu_list">
-                <li class="menu_item">
-                    <a href="dashboardAdmin.html" class="menu_link">
-                        <span class="menu_icon">🏠</span>
-                        <span class="menu_text">Dashboard</span>
-                    </a>
-                </li>
-                <li class="menu_item">
-                    <a href="registrarVentaAdmin.html" class="menu_link">
-                        <span class="menu_icon">📊</span>
-                        <span class="menu_text">Registrar Venta</span>
-                    </a>
-                </li>
-                <li class="menu_item">
-                    <a href="adminUsuarios.html" class="menu_link">
-                        <span class="menu_icon">👥</span>
-                        <span class="menu_text">Meseros</span>
-                    </a>
-                </li>
-                <li class="menu_item">
-                    <a href="adminInventario.html" class="menu_link">
-                        <span class="menu_icon">📦</span>
-                        <span class="menu_text">Productos e Inventario</span>
-                    </a>
-                </li>
-                <li class="menu_item">
-                    <a href="adminProveedores.html" class="menu_link">
-                        <span class="menu_icon">🚚</span>
-                        <span class="menu_text">Proveedores</span>
-                    </a>
-                </li>
-                <li class="menu_item">
-                    <a href="adminReportes.html" class="menu_link active">
-                        <span class="menu_icon">📈</span>
-                        <span class="menu_text">Reportes</span>
-                    </a>
-                </li>
-            </ul>
-        </nav>
-
-
-        <div class="menu_footer">
-            <a id="cerrarSesion" class="menu_link logout">
-                <span class="menu_icon">🚪</span>
-                <span class="menu_text">Cerrar Sesión</span>
-            </a>
-        </div>
-    </div>
-
+    <div id="menu-container"></div>
 
     <main>
         <div id="card_principal" class="card_principal">
