@@ -31,7 +31,6 @@ document.addEventListener("DOMContentLoaded", () => {
         .then(response => response.text())
         .then(data => {
             container.innerHTML = data;
-
             activarMenuActual();
             configurarCerrarSesion();
         })

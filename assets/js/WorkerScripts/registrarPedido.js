@@ -1,19 +1,29 @@
 const checkUser = () => {
-  const usuario = JSON.parse(localStorage.getItem("usuario"));
+    const usuario = JSON.parse(localStorage.getItem("usuario"));
 
-  if (!usuario) {
-    window.location.href = "../../index.html";
-  }
+    if (!usuario) {
+        window.location.href = "../../index.html";
+    }
 };
 
 checkUser();
 
-const tipoServicio = document.getElementById('tipoServicio');
+const numMesa = document.getElementById("mesas");
+
+// Crear 10 mesas más
+for (let i = 1; i <= 10; i++) {
+    const option = document.createElement("option");
+    option.value = "mesa" + i;
+    option.textContent = "Mesa " + i;
+    
+    numMesa.appendChild(option);
+}
+
 const costoDomicilio = document.getElementById('costo_domicilio');
 const botonesAgregar = document.querySelectorAll('.btn_agregar');
 botonesAgregar.forEach(btn => btn.disabled = true);
 
-tipoServicio.addEventListener('change', function() {
+numMesa.addEventListener('change', function() {
     if (this.value === 'domicilio') {
         costoDomicilio.disabled = false;
         costoDomicilio.placeholder = "Ingrese el costo del domicilio...";
@@ -34,10 +44,10 @@ let carrito = [];
 // Agregar eventos a botones de agregar
 botonesAgregar.forEach(button => {
     button.addEventListener('click', function() {
-        const tipo = tipoServicio.value;
+        const mesa = numMesa.value;
 
-        if (!tipo) {
-            alert('Primero seleccione un tipo de servicio');
+        if (!mesa) {
+            alert('Primero seleccione una mesa');
             return;
         }
 
@@ -133,12 +143,6 @@ document.querySelector('.btn_limpiar').addEventListener('click', function() {
 document.querySelector('.btn_completar').addEventListener('click', function() {
     if (carrito.length === 0) {
         alert('Por favor, agregue al menos un producto');
-        return;
-    } else if (document.getElementById('tipoServicio').value === '') {
-        alert('Por favor, seleccione un tipo de servicio');
-        return;
-    } else if (document.getElementById('tipoServicio').value === 'domicilio' && document.getElementById('costo_domicilio').value === '') {
-        alert('Por favor, ingrese el costo de domicilio');
         return;
     }
     

@@ -22,16 +22,10 @@
         
         <div class="venta_form">
             <div class="mesa_section">
-                <label for="tipoServicio">Tipo de Servicio:</label>
-                <select id="tipoServicio" class="tipo_servicio_select">
+                <label for="mesa">Mesa:</label>
+                <select id="mesas" class="tipo_servicio_select">
                     <option value="">Seleccionar...</option>
-                    <option value="compraLocal">Compra Local</option>
-                    <option value="domicilio">Domicilio</option>
                 </select>
-            </div>
-            <div class="mesa_section">
-                <label for="costo_domicilio">Costo de Domicilio:</label>
-                <input type="number" id="costo_domicilio" name="costo_domicilio" step="50" min="50" placeholder="Solo se puede en domicilio" disabled>
             </div>
         </div>
         
@@ -117,11 +111,12 @@
                         <p>Ningún producto agregado</p>
                     </div>
                 </div>
-                <button class="btn_completar">Agregar Pedido</button>
+                <button class="btn_completar">Agregar Orden</button>
                 <button class="btn_limpiar">Limpiar Orden</button>
             </div>
         </div>
     </div>
     <script type="module" src="../../../js/WorkerScripts/registrarPedido.js"></script>
+    <script type="module" src="../../../js/globalScripts.js"></script>
 </body>
 </html>
