@@ -1,0 +1,210 @@
+const checkUser = () => {
+  const usuario = JSON.parse(localStorage.getItem("usuario"));
+
+  if (!usuario) {
+    window.location.href = "../../index.html";
+  }
+};
+
+checkUser();
+
+const tipoServicio = document.getElementById('tipoServicio');
+const costoDomicilio = document.getElementById('costo_domicilio');
+const botonesAgregar = document.querySelectorAll('.btn_agregar');
+botonesAgregar.forEach(btn => btn.disabled = true);
+
+tipoServicio.addEventListener('change', function() {
+    if (this.value === 'domicilio') {
+        costoDomicilio.disabled = false;
+        costoDomicilio.placeholder = "Ingrese el costo del domicilio...";
+    } else if (this.value === 'compraLocal') {
+        costoDomicilio.disabled = true;
+        costoDomicilio.placeholder = "Solo se puede en domicilio";
+    }
+
+    const habilitar = this.value !== '';
+        botonesAgregar.forEach(btn => {
+        btn.disabled = !habilitar;
+    });
+});
+
+// Almacenar carrito en memoria
+let carrito = [];
+
+// Agregar eventos a botones de agregar
+botonesAgregar.forEach(button => {
+    button.addEventListener('click', function() {
+        const tipo = tipoServicio.value;
+
+        if (!tipo) {
+            alert('Primero seleccione un tipo de servicio');
+            return;
+        }
+
+        const producto = this.dataset.producto;
+        const precio = parseFloat(this.dataset.precio);
+        agregarAlCarrito(producto, precio);
+    });
+});
+
+
+
+function agregarAlCarrito(producto, precio) {
+    const itemExistente = carrito.find(item => item.nombre === producto);
+    
+    if (itemExistente) {
+        itemExistente.cantidad++;
+    } else {
+        carrito.push({ nombre: producto, precio: precio, cantidad: 1 });
+    }
+
+    //LIMPIAR BÚSQUEDA
+    document.getElementById('buscarProducto').value = '';
+
+    //LIMPIAR CATEGORÍA
+    document.getElementById('filtroCategoria').value = '';
+
+    //MOSTRAR TODOS LOS PRODUCTOS
+    document.querySelectorAll('.producto_item').forEach(item => {
+        item.style.display = 'flex';
+    });
+
+    actualizarCarrito();
+}
+
+function actualizarCarrito() {
+    const carritoItems = document.getElementById('carritoItems');
+    
+    if (carrito.length === 0) {
+        carritoItems.innerHTML = '<div class="carrito_vacio"><p>Ningún producto agregado</p></div>';
+        return;
+    }
+    
+    let html = '';
+    carrito.forEach((item, index) => {
+        html += `
+            <div class="carrito_item">
+                <div class="item_info">
+                    <span class="item_nombre">${item.nombre}</span>
+                    <span class="item_cantidad">Cant: ${item.cantidad}</span>
+                </div>
+                <span class="item_subtotal">$${(item.precio * item.cantidad).toFixed(2)}</span>
+                <button class="btn_eliminar" data-index="${index}">-</button>
+                <button class="btn_add" data-index="${index}" 
+                    data-producto="${item.nombre}" data-precio="${item.precio}">+</button>
+            </div>
+        `;
+    });
+    
+    carritoItems.innerHTML = html;
+    
+    document.querySelectorAll('.btn_eliminar').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const index = this.getAttribute('data-index');
+            eliminarDelCarrito(index);
+        });
+    });
+
+    document.querySelectorAll('.btn_add').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const producto = this.dataset.producto;
+            const precio = parseFloat(this.dataset.precio);
+            agregarAlCarrito(producto, precio);
+        });
+    });
+}
+
+function eliminarDelCarrito(index) {
+    if (carrito[index].cantidad > 1) {
+        carrito[index].cantidad--;
+    } else {
+        carrito.splice(index, 1);
+    }
+
+    actualizarCarrito();
+}
+
+// Botones de acción
+document.querySelector('.btn_limpiar').addEventListener('click', function() {
+    carrito = [];
+    actualizarCarrito();
+});
+
+document.querySelector('.btn_completar').addEventListener('click', function() {
+    if (carrito.length === 0) {
+        alert('Por favor, agregue al menos un producto');
+        return;
+    } else if (document.getElementById('tipoServicio').value === '') {
+        alert('Por favor, seleccione un tipo de servicio');
+        return;
+    } else if (document.getElementById('tipoServicio').value === 'domicilio' && document.getElementById('costo_domicilio').value === '') {
+        alert('Por favor, ingrese el costo de domicilio');
+        return;
+    }
+    
+    const usuario = JSON.parse(localStorage.getItem("usuario"));
+    if (confirm('¿Quiere enviar el pedido?')) {
+        
+        if (usuario.tipo_usuario) {
+            window.location.replace('/assets/pages/homeAdmin.html');
+        } else {
+            window.location.replace('/assets/pages/homeWorker.html');
+        }
+    }
+});
+
+// Búsqueda de productos
+const filtroCategoria = document.getElementById('filtroCategoria');
+const categorias = ['hamburguesas', 'pizzas', 'ensaladas', 'pastas', 'bebidas', 'postres'];
+
+categorias.forEach(cat => {
+    const option = document.createElement('option');
+    option.value = cat;
+    option.textContent = cat.charAt(0).toUpperCase() + cat.slice(1);
+    filtroCategoria.appendChild(option);
+});
+
+filtroCategoria.addEventListener('change', function() {
+    const categoria = this.value;
+
+    document.querySelectorAll('.producto_item').forEach(item => {
+        const itemCategoria = item.getAttribute('data-categoria');
+
+        if (!categoria || itemCategoria === categoria) {
+            item.style.display = 'flex';
+        } else {
+            item.style.display = 'none';
+        }
+    });
+});
+
+document.getElementById('buscarProducto').addEventListener('input', function(e) {
+    const busqueda = e.target.value.toLowerCase();
+    const categoria = filtroCategoria.value;
+
+    document.querySelectorAll('.producto_item').forEach(item => {
+        const nombre = item.querySelector('.producto_nombre').textContent.toLowerCase();
+        const descripcion = item.querySelector('.producto_descripcion').textContent.toLowerCase();
+        const itemCategoria = item.getAttribute('data-categoria');
+
+        const coincideBusqueda = nombre.includes(busqueda) || descripcion.includes(busqueda);
+        const coincideCategoria = !categoria || itemCategoria === categoria;
+
+        item.style.display = (coincideBusqueda && coincideCategoria) ? 'flex' : 'none';
+    });
+});
+
+//Boton Volver
+try {
+    const volver = document.getElementById('btn_volver');
+    volver.addEventListener('click', function() {
+        const usuario = JSON.parse(localStorage.getItem("usuario"));
+        if (usuario.tipo_usuario) {
+            window.location.replace('/assets/pages/homeAdmin.html');
+        } else {
+            window.location.replace('/assets/pages/homeWorker.html');
+        }
+    }); 
+} catch (error) {
+    console.error('No hay botón de volver disponible:');
+}
