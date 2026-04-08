@@ -19,7 +19,7 @@
             </div>
             <div class="headOptions">
                 <input type="text" id="buscador_general" placeholder="Buscar...">
-                <button class="btn_agregar" onclick="abrirCrearProducto()">Agregar</button>
+                <button class="btn_agregar">Agregar</button>
             </div>
             <div class="tab_content active" id="productos">
                 <table>
@@ -94,6 +94,51 @@
                     </label>
 
                     <button onclick="crearProducto()">Crear</button>
+                </div>
+            </div>
+
+            <div id="modalCrearIngrediente" class="modal">
+                <div class="modal_content">
+                    <span class="cerrarProveedor" onclick="cerrarModal('modalCrearIngrediente')">&times;</span>
+                    <h2>Crear Ingrediente</h2>
+                    <div class="editForm">
+                            <label for="crear_nombre_ing">Nombre:</label>
+                        <input type="text" id="crear_nombre_ing" placeholder="Nombre">
+                        <label for="crear_unidad">Medida:</label>
+                        <select id="crear_unidad">
+                            <option value="unidad">Unidad</option>
+                            <option value="kilogramos">Kilogramos</option>
+                        </select>
+                        <label for="crear_stock_actual">Cantidad actual:</label>
+                        <input type="number" id="crear_stock_actual" placeholder="Stock actual">
+                        <label for="crear_stock_minimo">Cantidad Minima:</label>
+                        <input type="number" id="crear_stock_minimo" placeholder="Stock mínimo">
+                    </div>
+                    <button onclick="crearIngrediente()">Guardar</button>
+                </div>
+            </div>
+
+            <div id="modalEditarIngrediente" class="modal">
+                <div class="modal_content">
+                    <span class="cerrarProveedor" onclick="cerrarModal('modalEditarIngrediente')">&times;</span>
+                    <h2>Editar Ingrediente</h2>
+                    <div class="editForm">
+                        <input type="hidden" id="edit_id_ing">
+                        <label for="edit_nombre_ing">Nombre:</label>
+                        <input type="text" id="edit_nombre_ing" placeholder="Nombre">
+                        <label for="edit_unidad">Medida:</label>
+                        <select id="edit_unidad">
+                            <option value="unidad">Unidad</option>
+                            <option value="kilogramos">Kilogramos</option>
+                        </select>
+                        <label for="edit_stock_actual">Cantidad actual:</label>
+                        <input type="number" id="edit_stock_actual" placeholder="Stock actual">
+                        <label for="edit_stock_minimo">Cantidad Minima:</label>
+                        <input type="number" id="edit_stock_minimo" placeholder="Stock mínimo">
+
+                    </div>
+                    
+                    <button onclick="guardarIngrediente()">Guardar</button>
                 </div>
             </div>
         </div>

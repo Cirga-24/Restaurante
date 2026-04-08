@@ -9,6 +9,8 @@ const tabs = document.querySelectorAll('.tab_btn');
 const contents = document.querySelectorAll('.tab_content');
 let productosData = [];
 let inventarioData = [];
+let productoOriginal = {};
+let ingredienteOriginal = {};
 
 tabs.forEach(tab => {
     tab.addEventListener('click', () => {
@@ -29,6 +31,7 @@ const cargarProductos = async () => {
             precio,
             activo,
             categoria (
+                id_categoria,
                 nombre
             )
         `);
@@ -72,7 +75,7 @@ const renderProductos = (data) => {
             <td>${p.categoria?.nombre || 'Sin categoría'}</td>
             <td>${p.activo ? 'Sí' : 'No'}</td>
             <td class="opciones">
-                <button class="btn_editar" onclick="abrirEditarProducto(${p.id_producto}, '${p.nombre}', ${p.precio}, ${p.id_categoria}, ${p.activo})">Editar</button>
+                <button class="btn_editar" onclick="abrirEditarProducto(${p.id_producto}, \`${p.nombre}\`, ${p.precio}, ${p.categoria?.id_categoria}, ${p.activo})">Editar</button>
                 <button class="btn_eliminar" onclick="eliminarProducto(${p.id_producto})">Eliminar</button>
             </td>
         </tr>`;
@@ -92,7 +95,16 @@ const renderInventario = (data) => {
             <td>${i.stock_actual}</td>
             <td>${i.stock_minimo}</td>
             <td class="opciones">
-                <button class="btn_editar" onclick="abrirEditarIngrediente(${i.id_ingrediente}, '${i.unidad_medida}', ${i.stock_actual}, ${i.stock_minimo})">Editar</button>
+                <button class="btn_editar" 
+                onclick="abrirEditarIngrediente(
+                    ${i.id_ingrediente}, 
+                    \`${i.nombre}\`, 
+                    '${i.unidad_medida}', 
+                    ${i.stock_actual}, 
+                    ${i.stock_minimo}
+                )">
+                Editar
+                </button>
                 <button class="btn_eliminar" onclick="eliminarIngrediente(${i.id_ingrediente})">Eliminar</button>
             </td>
         </tr>`;
@@ -107,7 +119,7 @@ document.getElementById('buscador_general')
     if (tabActiva === 'productos') {
         const filtrados = productosData.filter(p =>
             p.nombre.toLowerCase().includes(texto) ||
-            p.id_categoria.toString().includes(texto)
+            p.categoria?.nombre.toLowerCase().includes(texto)
         );
         renderProductos(filtrados);
     }
@@ -172,11 +184,19 @@ window.abrirEditarProducto = async (id, nombre, precio, categoriaId, activo) => 
     
     await cargarCategorias();
 
+    // 🔥 guardar valores originales
+    productoOriginal = {
+        nombre,
+        precio,
+        categoriaId,
+        activo
+    };
+
     document.getElementById('edit_id_producto').value = id;
     document.getElementById('edit_nombre').value = nombre;
     document.getElementById('edit_precio').value = precio;
     document.getElementById('edit_categoria').value = categoriaId || '';
-    document.getElementById('edit_activo').checked = activo;
+    document.getElementById('edit_activo').checked = !!activo;
 
     document.getElementById('modalEditarProducto').style.display = 'flex';
 };
@@ -184,18 +204,42 @@ window.abrirEditarProducto = async (id, nombre, precio, categoriaId, activo) => 
 window.guardarProducto = async () => {
     const id = document.getElementById('edit_id_producto').value;
 
+    const nombre = document.getElementById('edit_nombre').value;
+    const precio = document.getElementById('edit_precio').value;
+    const categoria = document.getElementById('edit_categoria').value;
+    const activo = document.getElementById('edit_activo').checked;
+
+    let datos = {};
+
+    if (nombre && nombre !== productoOriginal.nombre) {
+        datos.nombre = nombre;
+    }
+
+    if (precio && parseFloat(precio) !== productoOriginal.precio) {
+        datos.precio = parseFloat(precio);
+    }
+
+    if (categoria && parseInt(categoria) !== productoOriginal.categoriaId) {
+        datos.id_categoria = parseInt(categoria);
+    }
+
+    if (activo !== productoOriginal.activo) {
+        datos.activo = activo;
+    }
+
+    if (Object.keys(datos).length === 0) {
+        alert("No hiciste cambios");
+        return;
+    }
+
     const { error } = await supabase
         .from('producto')
-        .update({
-            nombre: document.getElementById('edit_nombre').value,
-            precio: document.getElementById('edit_precio').value,
-            id_categoria: document.getElementById('edit_categoria').value,
-            activo: document.getElementById('edit_activo').checked
-        })
+        .update(datos)
         .eq('id_producto', id);
 
     if (error) {
         console.error(error);
+        alert("Error al actualizar");
         return;
     }
 
@@ -274,4 +318,127 @@ window.crearProducto = async () => {
 
     cerrarModal('modalCrearProducto');
     cargarProductos();
+};
+
+document.querySelector('.btn_agregar').addEventListener('click', () => {
+    cerrarTodosLosModales(); // 👈 clave
+
+    const tabActiva = obtenerTabActiva();
+
+    if (tabActiva === 'productos') {
+        abrirCrearProducto();
+    } else {
+        abrirCrearIngrediente();
+    }
+});
+
+window.abrirCrearIngrediente = () => {
+    document.getElementById('crear_nombre_ing').value = '';
+    document.getElementById('crear_unidad').value = '';
+    document.getElementById('crear_stock_actual').value = '';
+    document.getElementById('crear_stock_minimo').value = '';
+
+    document.getElementById('modalCrearIngrediente').style.display = 'flex';
+};
+
+window.crearIngrediente = async () => {
+    const nombre = document.getElementById('crear_nombre_ing').value;
+    const unidad = document.getElementById('crear_unidad').value;
+    const stockActual = document.getElementById('crear_stock_actual').value;
+    const stockMinimo = document.getElementById('crear_stock_minimo').value;
+
+    if (!nombre || !unidad) {
+        alert("Completa los campos básicos");
+        return;
+    }
+
+    const { error } = await supabase
+        .from('ingrediente')
+        .insert([{
+            nombre: nombre,
+            unidad_medida: unidad,
+            stock_actual: stockActual ? Number(stockActual) : 0,
+            stock_minimo: stockMinimo ? Number(stockMinimo) : 0
+        }]);
+
+    if (error) {
+        console.error(error);
+        alert("Error al crear ingrediente");
+        return;
+    }
+
+    
+    cerrarModal('modalCrearIngrediente');
+    cargarInventario();
+};
+
+
+const cerrarTodosLosModales = () => {
+    document.querySelectorAll('.modal').forEach(modal => {
+        modal.style.display = 'none';
+    });
+};
+
+window.abrirEditarIngrediente = (id, nombre, unidad, stockActual, stockMinimo) => {
+
+    ingredienteOriginal = {
+        nombre,
+        unidad,
+        stockActual,
+        stockMinimo
+    };
+
+    document.getElementById('edit_id_ing').value = id;
+    document.getElementById('edit_nombre_ing').value = nombre;
+    document.getElementById('edit_unidad').value = unidad;
+    document.getElementById('edit_stock_actual').value = stockActual;
+    document.getElementById('edit_stock_minimo').value = stockMinimo;
+
+    document.getElementById('modalEditarIngrediente').style.display = 'flex';
+};
+
+window.guardarIngrediente = async () => {
+    const id = document.getElementById('edit_id_ing').value;
+
+    const nombre = document.getElementById('edit_nombre_ing').value;
+    const unidad = document.getElementById('edit_unidad').value;
+    const stockActual = document.getElementById('edit_stock_actual').value;
+    const stockMinimo = document.getElementById('edit_stock_minimo').value;
+
+    let datos = {};
+
+    if (nombre && nombre !== ingredienteOriginal.nombre) {
+        datos.nombre = nombre;
+    }
+
+    if (unidad !== ingredienteOriginal.unidad) {
+        datos.unidad_medida = unidad;
+    }
+
+    if (stockActual && Number(stockActual) !== ingredienteOriginal.stockActual) {
+        datos.stock_actual = Number(stockActual);
+    }
+
+    if (stockMinimo && Number(stockMinimo) !== ingredienteOriginal.stockMinimo) {
+        datos.stock_minimo = Number(stockMinimo);
+    }
+
+    if (Object.keys(datos).length === 0) {
+        alert("No hiciste cambios");
+        return;
+    }
+
+    const { error } = await supabase
+        .from('ingrediente')
+        .update(datos)
+        .eq('id_ingrediente', id);
+
+    if (error) {
+        console.error(error);
+        alert("Error al actualizar ingrediente");
+        return;
+    }
+
+    cerrarModal('modalEditarIngrediente');
+    cargarInventario();
 };

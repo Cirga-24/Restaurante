@@ -1,13 +1,15 @@
 .card_principal {
-    grid-template-rows: auto 1fr auto;
+    display: flex;
+    flex-direction: row;
 }
 
 .tabs {
+    margin-left: 1.6%;
     display: flex;
     gap: 10px;
     margin-bottom: 20px;
-    border-bottom: 2px solid #868686;
 }
+
 
 .tab_btn {
     padding: 10px 20px;
@@ -17,12 +19,13 @@
     border-radius: 10px 10px 0 0;
     width: 200px;
     transition: all 1ms ease-in-out;
+    border-bottom: 2px solid #ffffff;
 }
 
 .tab_btn.active {
     background: #ffc954;
     font-weight: bold;
-    border-bottom: 2px solid white;
+    border-bottom: 2px solid rgb(0, 0, 0);
     color: white;
     width: 200px;
 }
@@ -33,6 +36,8 @@
     padding: 20px;
     border-radius: 0 10px 10px 10px;
     width: 100%;
+    height: 500px; /* 🔥 clave */
+    overflow-y: auto; /* scroll interno */
 }
 
 .tab_content.active {
@@ -91,14 +96,15 @@ input {
     border-radius: 16px;
     width: 400px;
     max-width: 90%;
-
     display: flex;
     flex-direction: column;
     gap: 12px;
-
     box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
-
     animation: aparecerModal 0.25s ease;
+}
+
+ {
+    width: 90%;
 }
 
 /* Animación */
@@ -128,7 +134,6 @@ input {
     border: 1px solid #ccc;
     outline: none;
     font-size: 14px;
-
     transition: border 0.2s, box-shadow 0.2s;
 }
 
@@ -150,7 +155,7 @@ input {
 /* Botón guardar */
 .modal_content button {
     margin-top: 10px;
-    background: #2563eb;
+    background: #f5c950;
     color: white;
     border: none;
     padding: 12px;
@@ -162,7 +167,7 @@ input {
 }
 
 .modal_content button:hover {
-    background: #1d4ed8;
+    background: #cca846;
 }
 
 .modal_content button:active {
