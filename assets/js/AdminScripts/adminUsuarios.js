@@ -144,7 +144,6 @@ document.getElementById("btn_guardar_edicion").addEventListener("click", async (
         correo
     };
 
-    // 👉 solo actualizar password si el usuario escribe algo
     if (password !== "") {
         datosActualizados.password = password;
     }

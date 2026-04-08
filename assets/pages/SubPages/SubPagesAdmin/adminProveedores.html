@@ -1,16 +1,10 @@
 <!DOCTYPE <html>
 <html lang="en">
 <head>
-    <script>
-    const usuario = localStorage.getItem("usuario");
-    if (!usuario) {
-        window.location.href = "../../index.html";
-    }
-    </script>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Home Admin</title>
-    <link rel="stylesheet" href="../../../css/registrarVentaStyles.css" />
+    <link rel="stylesheet" href="../../../css/AdminStyles/adminProveedores.css" />
     <link rel="stylesheet" href="../../../css/menuLateralStyles.css" />
 </head>
 <body>
@@ -19,10 +13,55 @@
 
     <main>
         <div id="card_principal" class="card_principal">
-        
+            <div>
+                <h2>Proveedores</h2>
+                <hr class="separation"></hr>
+                <button id="abrirModalProveedor">Agregar Proveedor</button>
+
+                <table class="tabla_proveedores">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Nombre</th>
+                            <th>Teléfono</th>
+                            <th>Dirección</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tablaProveedores">
+                    </tbody>
+                </table>
+            </div>
+            <div id="modalProveedor" class="modal">
+                <div class="modal_content">
+                    <span class="cerrarProveedor">&times;</span>
+                    <h2>Editar Proveedor</h2>
+
+                    <input type="hidden" id="editIdProveedor">
+
+                    <input type="text" id="editNombreProv" placeholder="Nombre">
+                    <input type="text" id="editTelefonoProv" placeholder="Teléfono">
+                    <input type="text" id="editDireccionProv" placeholder="Dirección">
+
+                    <button id="guardarProveedor">Guardar</button>
+                </div>
+            </div>
+
+            <div id="modalAgregarProveedor" class="modal">
+                <div class="modal_content">
+                    <span class="cerrarAgregarProveedor">&times;</span>
+                    <h2>Agregar Proveedor</h2>
+
+                    <input type="text" id="provNombre" placeholder="Nombre del proveedor">
+                    <input type="text" id="provTelefono" placeholder="Teléfono">
+                    <input type="text" id="provDireccion" placeholder="Dirección">
+
+                    <button id="btnGuardarProveedor">Guardar</button>
+                </div>
+            </div>
         </div>
     </main>
-    <script type="module" src="../../../js/homeAdminScripts.js"></script>
+    <script type="module" src="../../../js/AdminScripts/adminProveedores.js"></script>
     <script type="module" src="../../../js/globalScripts.js"></script>
 </body>
 </html>
