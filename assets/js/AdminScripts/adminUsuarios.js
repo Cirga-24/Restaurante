@@ -10,7 +10,6 @@ botonesEliminar.forEach(boton => {
 });
 
 //Cargar tarjetas de meseros desde el backend
-
 const contenedor = document.querySelector(".mostrar_meseros");
 try {
     const cargarUsuarios = async () => {
@@ -23,12 +22,12 @@ try {
             return;
         }
 
-        contenedor.innerHTML = ""; // limpiar antes de cargar
+        contenedor.innerHTML = "";
 
         data.forEach(usuario => {
             const card = document.createElement("div");
             card.classList.add("mesero_card");
-
+            let password = usuario.password;
             let tipoUsuario = "";
             let numero = "";
             let correo = "";
@@ -56,6 +55,7 @@ try {
                     <p class="phone">Teléfono: ${numero}</p>
                     <p class="email">Correo: ${correo}</p>
                     <p class="tipo">Tipo: ${tipoUsuario}</p>
+                    <p class="tipo">Contraseña: ${password}</p>
                 </div>
                 <div class="mesero_options">
                     <button class="delete-button">Eliminar</button>
