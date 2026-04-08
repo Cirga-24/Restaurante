@@ -213,9 +213,9 @@ document.querySelector('.btn_completar').addEventListener('click', function() {
     const usuario = JSON.parse(localStorage.getItem("usuario"));
     alert('Venta completada. Total: ' + document.getElementById('total').textContent);
     if (usuario.tipo_usuario) {
-        window.location.replace('/assets/pages/homeAdmin.html');
+        window.location.replace('../pages/SubPages/SubPagesAdmin/dashboardAdmin.html');
     } else {
-        window.location.replace('/assets/pages/homeWorker.html');
+        window.location.replace('../pages/homeWorker.html');
     }
 });
 
@@ -341,6 +341,49 @@ const cargarProductos = async () => {
 
         productosList.appendChild(div);
     });
+};
+
+const guardarPedido = async () => {
+    const usuario = JSON.parse(localStorage.getItem("usuario"));
+
+    const tipo = tipoServicio.value;
+    const costoDom = parseFloat(document.getElementById('costo_domicilio').value) || 0;
+
+    const subtotal = carrito.reduce((sum, item) => sum + (item.precio * item.cantidad), 0);
+
+    let total = 0;
+    let servicioMesa = 0;
+
+    if (tipo === 'compraLocal') {
+        servicioMesa = 3000;
+        total = subtotal + servicioMesa;
+    } else if (tipo === 'domicilio') {
+        total = subtotal + costoDom;
+    }
+
+    const { data, error } = await supabase
+        .from("pedido")
+        .insert([
+            {
+                fecha: new Date(),
+                tipo: tipo,
+                costo_domicilio: tipo === 'domicilio' ? costoDom : null,
+                total: total,
+                servicio_mesa: tipo === 'compraLocal' ? servicioMesa : null,
+                id_usuario: usuario.id_usuario,
+                estado: true,
+                id_mesa: null
+            }
+        ])
+        .select();
+
+    if (error) {
+        console.error("Error guardando pedido:", error);
+        alert("Error al guardar el pedido");
+        return null;
+    }
+
+    return data[0];
 };
 
 cargarCategorias();
