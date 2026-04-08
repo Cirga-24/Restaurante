@@ -42,7 +42,10 @@
                 <input type="text" id="nuevoNombre" placeholder="Usuario">
                 <input type="text" id="nuevoTelefono" placeholder="Teléfono">
                 <input type="email" id="nuevoCorreo" placeholder="Correo">
-                <input type="password" id="nuevoPassword" placeholder="Contraseña">
+                <div class="password_container">
+                    <input type="password" id="nuevoPassword" placeholder="Contraseña">
+                    <button type="button" class="toggle-password">👁</button>
+                </div>
                 <button id="btn_crear">Crear Usuario</button>
             </div>
         </div>
@@ -50,15 +53,14 @@
             <div class="modal_content">
                 <span class="cerrarEditar">&times;</span>
                 <h2>Editar Usuario</h2>
-
-                <!-- ID oculto (recomendado usarlo luego) -->
                 <input type="hidden" id="editId">
-
                 <input type="text" id="editNombre" placeholder="Usuario">
                 <input type="text" id="editTelefono" placeholder="Teléfono">
                 <input type="email" id="editCorreo" placeholder="Correo">
-                <input type="password" id="editPassword" placeholder="Nueva contraseña (opcional)">
-
+                <div class="password_container">
+                    <input type="password" id="editPassword" placeholder="Nueva contraseña">
+                    <button type="button" class="toggle-password">👁</button>
+                </div>
                 <button id="btn_guardar_edicion">Guardar Cambios</button>
             </div>
         </div>
