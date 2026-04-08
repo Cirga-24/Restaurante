@@ -147,7 +147,7 @@ body > div:not(.menu_lateral) {
     position: absolute;
     right: 0;
     width: 82%;
-    height: 100%;
+    min-height: 100vh;
     display: grid;
     background: white;
     border-radius: 12px;

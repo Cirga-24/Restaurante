@@ -1,3 +1,5 @@
+import { supabase } from './supabaseConexion.js';
+
 const checkUser = () => {
   const usuario = JSON.parse(localStorage.getItem("usuario"));
 
@@ -8,31 +10,42 @@ const checkUser = () => {
 
 checkUser();
 
+document.getElementById('servicio_row').style.display = 'none';
+document.getElementById('domicilio_row').style.display = 'none';
 const tipoServicio = document.getElementById('tipoServicio');
 const costoDomicilio = document.getElementById('costo_domicilio');
 const servicio = document.getElementById('servicio');
-const botonesAgregar = document.querySelectorAll('.btn_agregar');
-botonesAgregar.forEach(btn => btn.disabled = true);
+const servicioRow = document.getElementById('servicio_row');
+const domicilioRow = document.getElementById('domicilio_row');
+const botonesAgregar = document.querySelectorAll('.btn_agregar')
+
+function actualizarEstadoBotones() {
+    const habilitar = tipoServicio.value !== '';
+    document.querySelectorAll('.btn_agregar').forEach(btn => {
+        btn.disabled = !habilitar;
+    });
+}
 
 tipoServicio.addEventListener('change', function() {
     if (this.value === 'domicilio') {
         costoDomicilio.disabled = false;
         costoDomicilio.placeholder = "Ingrese el costo del domicilio..."; 
-        document.getElementById('servicio_row').style.display = 'none';
-        document.getElementById('domicilio_row').style.display = 'flex';
+        servicioRow.style.display = 'none';
+        domicilioRow.style.display = 'flex';
         actualizarTotales();
     } else if (this.value === 'compraLocal') {
-        document.getElementById('servicio_row').style.display = 'flex';
-        document.getElementById('domicilio_row').style.display = 'none';
+        servicioRow.style.display = 'flex';
+        domicilioRow.style.display = 'none';
         costoDomicilio.disabled = true;
         costoDomicilio.placeholder = "Solo se puede en domicilio";
         actualizarTotales();
+    } else if (this.value === '') {
+        costoDomicilio.disabled = true;
+        costoDomicilio.placeholder = "Solo se puede en domicilio";
+        botonesAgregar.forEach(btn => btn.disabled = true);
+        actualizarTotales();
     }
-
-    const habilitar = this.value !== '';
-        botonesAgregar.forEach(btn => {
-        btn.disabled = !habilitar;
-    });
+    actualizarEstadoBotones();
 });
 
 costoDomicilio.addEventListener('change', function() {
@@ -63,8 +76,11 @@ servicio.addEventListener('change', function() {
 let carrito = [];
 
 // Agregar eventos a botones de agregar
-botonesAgregar.forEach(button => {
-    button.addEventListener('click', function() {
+document.addEventListener("click", (e) => {
+    if (e.target.classList.contains("btn_agregar")) {
+
+        if (e.target.disabled) return; // 👈 bloquea si está deshabilitado
+
         const tipo = tipoServicio.value;
 
         if (!tipo) {
@@ -72,10 +88,11 @@ botonesAgregar.forEach(button => {
             return;
         }
 
-        const producto = this.dataset.producto;
-        const precio = parseFloat(this.dataset.precio);
+        const producto = e.target.dataset.producto;
+        const precio = parseFloat(e.target.dataset.precio);
+
         agregarAlCarrito(producto, precio);
-    });
+    }
 });
 
 
@@ -204,25 +221,22 @@ document.querySelector('.btn_completar').addEventListener('click', function() {
 
 // Búsqueda de productos
 const filtroCategoria = document.getElementById('filtroCategoria');
-const categorias = ['hamburguesas', 'pizzas', 'ensaladas', 'pastas', 'bebidas', 'postres'];
 
-categorias.forEach(cat => {
-    const option = document.createElement('option');
-    option.value = cat;
-    option.textContent = cat.charAt(0).toUpperCase() + cat.slice(1);
-    filtroCategoria.appendChild(option);
-});
+filtroCategoria.addEventListener("change", () => {
+    const categoriaSeleccionada = filtroCategoria.value;
 
-filtroCategoria.addEventListener('change', function() {
-    const categoria = this.value;
+    const productos = document.querySelectorAll(".producto_item");
 
-    document.querySelectorAll('.producto_item').forEach(item => {
-        const itemCategoria = item.getAttribute('data-categoria');
+    productos.forEach(prod => {
+        if (!categoriaSeleccionada) {
+            prod.style.display = "flex";
+            return;
+        }
 
-        if (!categoria || itemCategoria === categoria) {
-            item.style.display = 'flex';
+        if (prod.dataset.categoria == categoriaSeleccionada) {
+            prod.style.display = "flex";
         } else {
-            item.style.display = 'none';
+            prod.style.display = "none";
         }
     });
 });
@@ -257,3 +271,78 @@ try {
 } catch (error) {
     console.error('No hay botón de volver disponible:');
 }
+
+
+//Cargar categorias
+const cargarCategorias = async () => {
+    const { data, error } = await supabase
+        .from("categoria")
+        .select("id_categoria, nombre");
+
+    if (error) {
+        console.error("Error cargando categorías:", error);
+        return;
+    }
+
+    data.forEach(cat => {
+        const option = document.createElement("option");
+        option.value = cat.id_categoria; // 👈 usamos el id
+        option.textContent = cat.nombre;
+        filtroCategoria.appendChild(option);
+    });
+};
+
+// Cargar productos
+const productosList = document.getElementById("productosList");
+
+const cargarProductos = async () => {
+    const { data, error } = await supabase
+        .from("producto")
+        .select(`
+            id_producto,
+            nombre,
+            precio,
+            id_categoria,
+            activo,
+            categoria (
+                id_categoria,
+                nombre
+            )
+        `)
+        .eq("activo", true); // 👈 solo productos activos
+
+    if (error) {
+        console.error("Error cargando productos:", error);
+        return;
+    }
+
+    productosList.innerHTML = "";
+
+    data.forEach(prod => {
+        const div = document.createElement("div");
+        div.classList.add("producto_item");
+
+        // 👇 guardamos el ID de la categoría (MEJOR que nombre)
+        div.dataset.categoria = prod.id_categoria;
+
+        div.innerHTML = `
+            <div class="producto_info">
+                <span class="producto_nombre">${prod.nombre}</span>
+                <span class="producto_descripcion">Categoría: ${prod.categoria?.nombre || "Sin categoría"}</span>
+            </div>
+            <span class="producto_precio">$${prod.precio}</span>
+            <button class="btn_agregar" 
+                data-producto="${prod.nombre}" 
+                data-precio="${prod.precio}"
+                disabled>
+                +
+            </button>
+        `;
+
+        productosList.appendChild(div);
+    });
+};
+
+cargarCategorias();
+cargarProductos();
+actualizarEstadoBotones();

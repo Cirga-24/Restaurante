@@ -1,3 +1,5 @@
+import { supabase } from '../supabaseConexion.js';
+
 const checkUser = () => {
     const usuario = JSON.parse(localStorage.getItem("usuario"));
 
@@ -8,8 +10,15 @@ const checkUser = () => {
 
 checkUser();
 
-const numMesa = document.getElementById("mesas");
 
+
+const numMesa = document.getElementById("mesas");
+function actualizarEstadoBotones() {
+    const habilitar = numMesa.value !== '';
+    document.querySelectorAll('.btn_agregar').forEach(btn => {
+        btn.disabled = !habilitar;
+    });
+}
 // Crear 10 mesas más
 for (let i = 1; i <= 10; i++) {
     const option = document.createElement("option");
@@ -24,26 +33,19 @@ const botonesAgregar = document.querySelectorAll('.btn_agregar');
 botonesAgregar.forEach(btn => btn.disabled = true);
 
 numMesa.addEventListener('change', function() {
-    if (this.value === 'domicilio') {
-        costoDomicilio.disabled = false;
-        costoDomicilio.placeholder = "Ingrese el costo del domicilio...";
-    } else if (this.value === 'compraLocal') {
-        costoDomicilio.disabled = true;
-        costoDomicilio.placeholder = "Solo se puede en domicilio";
+    if (this.value === '') {
     }
 
-    const habilitar = this.value !== '';
-        botonesAgregar.forEach(btn => {
-        btn.disabled = !habilitar;
-    });
+    actualizarEstadoBotones();
 });
 
 // Almacenar carrito en memoria
 let carrito = [];
 
 // Agregar eventos a botones de agregar
-botonesAgregar.forEach(button => {
-    button.addEventListener('click', function() {
+document.addEventListener("click", (e) => {
+    if (e.target.classList.contains("btn_agregar")) {
+
         const mesa = numMesa.value;
 
         if (!mesa) {
@@ -51,12 +53,12 @@ botonesAgregar.forEach(button => {
             return;
         }
 
-        const producto = this.dataset.producto;
-        const precio = parseFloat(this.dataset.precio);
-        agregarAlCarrito(producto, precio);
-    });
-});
+        const producto = e.target.dataset.producto;
+        const precio = parseFloat(e.target.dataset.precio);
 
+        agregarAlCarrito(producto, precio);
+    }
+});
 
 
 function agregarAlCarrito(producto, precio) {
@@ -148,6 +150,7 @@ document.querySelector('.btn_completar').addEventListener('click', function() {
     
     const usuario = JSON.parse(localStorage.getItem("usuario"));
     if (confirm('¿Quiere enviar el pedido?')) {
+        alert("Pedido registrado con éxito");
         if (usuario.tipo_usuario) {
             window.location.replace('/assets/pages/homeAdmin.html');
         } else {
@@ -211,3 +214,81 @@ try {
 } catch (error) {
     console.error('No hay botón de volver disponible:');
 }
+
+
+
+
+
+//Cargar categorias
+const cargarCategorias = async () => {
+    const { data, error } = await supabase
+        .from("categoria")
+        .select("id_categoria, nombre");
+
+    if (error) {
+        console.error("Error cargando categorías:", error);
+        return;
+    }
+
+    data.forEach(cat => {
+        const option = document.createElement("option");
+        option.value = cat.id_categoria; // 👈 usamos el id
+        option.textContent = cat.nombre;
+        filtroCategoria.appendChild(option);
+    });
+};
+
+// Cargar productos
+const productosList = document.getElementById("productosList");
+
+const cargarProductos = async () => {
+    const { data, error } = await supabase
+        .from("producto")
+        .select(`
+            id_producto,
+            nombre,
+            precio,
+            id_categoria,
+            activo,
+            categoria (
+                id_categoria,
+                nombre
+            )
+        `)
+        .eq("activo", true); // 👈 solo productos activos
+
+    if (error) {
+        console.error("Error cargando productos:", error);
+        return;
+    }
+
+    productosList.innerHTML = "";
+
+    data.forEach(prod => {
+        const div = document.createElement("div");
+        div.classList.add("producto_item");
+
+        // 👇 guardamos el ID de la categoría (MEJOR que nombre)
+        div.dataset.categoria = prod.id_categoria;
+
+        div.innerHTML = `
+            <div class="producto_info">
+                <span class="producto_nombre">${prod.nombre}</span>
+                <span class="producto_descripcion">Categoría: ${prod.categoria?.nombre || "Sin categoría"}</span>
+            </div>
+            <span class="producto_precio">$${prod.precio}</span>
+            <button class="btn_agregar" 
+                data-producto="${prod.nombre}" 
+                data-precio="${prod.precio}"
+                disabled>
+                +
+            </button>
+        `;
+
+        productosList.appendChild(div);
+    });
+};
+
+cargarCategorias();
+cargarProductos();
+actualizarEstadoBotones();
