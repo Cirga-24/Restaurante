@@ -53,30 +53,27 @@ document.addEventListener("click", (e) => {
             return;
         }
 
+        const id = e.target.dataset.id;
         const producto = e.target.dataset.producto;
         const precio = parseFloat(e.target.dataset.precio);
 
-        agregarAlCarrito(producto, precio);
+        agregarAlCarrito(id, producto, precio);
     }
 });
 
 
-function agregarAlCarrito(producto, precio) {
-    const itemExistente = carrito.find(item => item.nombre === producto);
-    
+function agregarAlCarrito(id, producto, precio) {
+    const itemExistente = carrito.find(item => item.id === id);
+
     if (itemExistente) {
         itemExistente.cantidad++;
     } else {
-        carrito.push({ nombre: producto, precio: precio, cantidad: 1 });
+        carrito.push({ id: id, nombre: producto, precio: precio, cantidad: 1 });
     }
 
-    //LIMPIAR BÚSQUEDA
     document.getElementById('buscarProducto').value = '';
-
-    //LIMPIAR CATEGORÍA
     document.getElementById('filtroCategoria').value = '';
 
-    //MOSTRAR TODOS LOS PRODUCTOS
     document.querySelectorAll('.producto_item').forEach(item => {
         item.style.display = 'flex';
     });
@@ -119,9 +116,11 @@ function actualizarCarrito() {
 
     document.querySelectorAll('.btn_add').forEach(btn => {
         btn.addEventListener('click', function() {
-            const producto = this.dataset.producto;
-            const precio = parseFloat(this.dataset.precio);
-            agregarAlCarrito(producto, precio);
+            const id = e.target.dataset.id;
+            const producto = e.target.dataset.producto;
+            const precio = parseFloat(e.target.dataset.precio);
+
+            agregarAlCarrito(id, producto, precio);
         });
     });
 }
@@ -142,20 +141,39 @@ document.querySelector('.btn_limpiar').addEventListener('click', function() {
     actualizarCarrito();
 });
 
-document.querySelector('.btn_completar').addEventListener('click', function() {
+document.querySelector('.btn_completar').addEventListener('click', async function() {
+
     if (carrito.length === 0) {
-        alert('Por favor, agregue al menos un producto');
+        alert('Agregue productos');
         return;
     }
-    
+
+    if (!numMesa.value) {
+        alert('Seleccione una mesa');
+        return;
+    }
+
+    if (!confirm('¿Enviar pedido?')) return;
+
+    // 🔥 1. guardar pedido
+    const pedido = await guardarPedido();
+    if (!pedido) return;
+
+    // 🔥 2. guardar detalle
+    const detalleOK = await guardarDetallePedido(pedido.id_pedido);
+    if (!detalleOK) return;
+
+    alert("✅ Pedido registrado con éxito");
+
+    carrito = [];
+    actualizarCarrito();
+
     const usuario = JSON.parse(localStorage.getItem("usuario"));
-    if (confirm('¿Quiere enviar el pedido?')) {
-        alert("Pedido registrado con éxito");
-        if (usuario.tipo_usuario) {
-            window.location.replace('/assets/pages/homeAdmin.html');
-        } else {
-            window.location.replace('/assets/pages/homeWorker.html');
-        }
+
+    if (usuario.tipo_usuario) {
+        window.location.replace('/assets/pages/homeAdmin.html');
+    } else {
+        window.location.replace('/assets/pages/homeWorker.html');
     }
 });
 
@@ -278,6 +296,7 @@ const cargarProductos = async () => {
             </div>
             <span class="producto_precio">$${prod.precio}</span>
             <button class="btn_agregar" 
+                data-id="${prod.id_producto}"
                 data-producto="${prod.nombre}" 
                 data-precio="${prod.precio}"
                 disabled>
@@ -287,6 +306,61 @@ const cargarProductos = async () => {
 
         productosList.appendChild(div);
     });
+};
+
+const guardarPedido = async () => {
+    const usuario = JSON.parse(localStorage.getItem("usuario"));
+
+    const subtotal = carrito.reduce((sum, item) => sum + (item.precio * item.cantidad), 0);
+
+    const total = subtotal + 3000; // servicio mesa
+
+    const { data, error } = await supabase
+        .from("pedido")
+        .insert([
+            {
+                fecha: new Date().toISOString(),
+                tipo: "compraLocal",
+                costo_domicilio: null,
+                total: total,
+                servicio_mesa: 3000,
+                id_usuario: usuario.id_usuario,
+                estado: true,
+                id_mesa: numMesa.value   // 👈 AQUÍ ESTÁ LA MAGIA
+            }
+        ])
+        .select();
+
+    if (error) {
+        console.error("Error guardando pedido:", error);
+        alert("Error al guardar pedido");
+        return null;
+    }
+
+    return data[0];
+};
+
+const guardarDetallePedido = async (idPedido) => {
+
+    const detalles = carrito.map(item => ({
+        id_pedido: idPedido,
+        id_producto: item.id,
+        cantidad: item.cantidad,
+        precio_unitario: item.precio,
+        subtotal: item.precio * item.cantidad
+    }));
+
+    const { error } = await supabase
+        .from("detalle_pedido")
+        .insert(detalles);
+
+    if (error) {
+        console.error("Error guardando detalle:", error);
+        alert("Error guardando detalle");
+        return false;
+    }
+
+    return true;
 };
 
 cargarCategorias();

@@ -1,0 +1,100 @@
+/* CONTENEDOR GENERAL */
+.card_principal {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 20px;
+    padding: 20px;
+}
+
+/* TARJETA */
+.pedido_card {
+    background: #ffffff;
+    border-radius: 15px;
+    padding: 18px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    transition: all 0.2s ease-in-out;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: auto;
+}
+
+/* HOVER */
+.pedido_card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 18px rgba(0, 0, 0, 0.15);
+}
+
+/* HEADER */
+.pedido_header {
+    display: grid;
+    justify-content: space-between;
+    gap: 10px;  
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.pedido_header span:first-child {
+    font-size: 16px;
+    font-weight: bold;
+}
+
+.pedido_header span:last-child {
+    font-size: 12px;
+    color: #777;
+}
+
+/* BODY */
+.pedido_body {
+    margin: 10px 0;
+}
+
+.pedido_body p {
+    margin: 5px 0;
+    font-size: 14px;
+}
+
+/* BADGE TIPO */
+.pedido_tipo {
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: bold;
+    margin-top: 5px;
+}
+
+.tipo_local {
+    background: #e0f7fa;
+    color: #00796b;
+}
+
+.tipo_domicilio {
+    background: #fff3e0;
+    color: #ef6c00;
+}
+
+/* TOTAL */
+.pedido_total {
+    font-size: 18px;
+    font-weight: bold;
+    margin-top: 10px;
+    color: #2e7d32;
+}
+
+/* BOTÓN */
+.btn_hecho {
+    margin-top: 15px;
+    padding: 10px;
+    border: none;
+    border-radius: 10px;
+    background: #4caf50;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.btn_hecho:hover {
+    background: #388e3c;
+}
