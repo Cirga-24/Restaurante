@@ -59,6 +59,7 @@ try {
                 </div>
                 <div class="mesero_options">
                     <button class="delete-button">Eliminar</button>
+                    <button class="edit-button">Editar</button>
                 </div>
             `;
 
@@ -95,4 +96,95 @@ document.addEventListener("click", async (e) => {
             alert(`Usuario ${nombre} eliminado exitosamente.`);
         };
     }
+});
+
+//Crear Usuario
+document.getElementById("btn_crear").addEventListener("click", async () => {
+    const username = document.getElementById("nuevoNombre").value;
+    const telefono = document.getElementById("nuevoTelefono").value;
+    const correo = document.getElementById("nuevoCorreo").value;
+    const password = document.getElementById("nuevoPassword").value;
+
+    if (!username || !password) {
+        alert("Nombre y contraseña obligatorios");
+        return;
+    }
+
+    const { error } = await supabase
+        .from("usuario")
+        .insert([{
+            username,
+            password,
+            tipo_usuario: false,
+            telefono,
+            correo
+        }]);
+
+    if (error) {
+        console.error(error);
+        alert("Error al crear usuario");
+        return;
+    }
+
+    alert("Usuario creado");
+    location.reload(); // recargar lista
+});
+
+
+//Editar Usuario
+document.addEventListener("click", async (e) => {
+    if (e.target.classList.contains("edit-button")) {
+
+        const tarjeta = e.target.closest(".mesero_card");
+        const nombre = tarjeta.querySelector(".name").textContent.replace("Nombre: ", "");
+
+        const nuevoTelefono = prompt("Nuevo teléfono:");
+        const nuevoCorreo = prompt("Nuevo correo:");
+
+        if (!nuevoTelefono && !nuevoCorreo) return;
+
+        const { error } = await supabase
+            .from("usuario")
+            .update({
+                telefono: nuevoTelefono,
+                correo: nuevoCorreo
+            })
+            .eq("username", nombre);
+
+        if (!error) {
+            alert("Usuario actualizado");
+            location.reload();
+        }
+    }
+});
+
+//Crear usuario
+const modal = document.getElementById("modalAgregar");
+const abrir = document.getElementById("abrirModal");
+const cerrar = document.querySelector(".cerrar");
+
+// Abrir
+abrir.addEventListener("click", () => {
+    modal.style.display = "flex";
+});
+
+// Cerrar con X
+cerrar.addEventListener("click", () => {
+    modal.style.display = "none";
+});
+
+// Cerrar haciendo click afuera
+window.addEventListener("click", (e) => {
+    if (e.target === modal) {
+        modal.style.display = "none";
+    }
+});
+
+function limpiarModal() {
+    document.querySelectorAll("#modalAgregar input").forEach(input => input.value = "");
+}
+
+cerrar.addEventListener("click", () => {
+    modal.style.display = "none";
+    limpiarModal();
 });
