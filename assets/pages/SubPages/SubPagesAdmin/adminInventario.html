@@ -1,16 +1,10 @@
 <!DOCTYPE <html>
 <html lang="en">
 <head>
-    <script>
-    const usuario = localStorage.getItem("usuario");
-    if (!usuario) {
-        window.location.href = "../../index.html";
-    }
-    </script>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Home Admin</title>
-    <link rel="stylesheet" href="../../../css/registrarVentaStyles.css" />
+    <link rel="stylesheet" href="../../../css/AdminStyles/adminInventario.css" />
     <link rel="stylesheet" href="../../../css/menuLateralStyles.css" />
 </head>
 <body>
@@ -19,10 +13,92 @@
 
     <main>
         <div id="card_principal" class="card_principal">
-        
+            <div class="tabs">
+                <button class="tab_btn active" data-tab="productos">Productos</button>
+                <button class="tab_btn" data-tab="inventario">Inventario</button>
+            </div>
+            <div class="headOptions">
+                <input type="text" id="buscador_general" placeholder="Buscar...">
+                <button class="btn_agregar" onclick="abrirCrearProducto()">Agregar</button>
+            </div>
+            <div class="tab_content active" id="productos">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Nombre</th>
+                            <th>Precio</th>
+                            <th>Categoría</th>
+                            <th>Activo</th>
+                            <th>Opciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tabla_productos"></tbody>
+                </table>
+            </div>
+
+            <div class="tab_content" id="inventario">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Nombre</th>
+                            <th>Unidad</th>
+                            <th>Stock Actual</th>
+                            <th>Stock Mínimo</th>
+                            <th>Opciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tabla_inventario"></tbody>
+                </table>
+            </div>
+
+            <div id="modalEditarProducto" class="modal">
+                <div class="modal_content">
+                    <span class="cerrarProveedor" onclick="cerrarModal('modalEditarProducto')">&times;</span>
+                    <h2>Editar Producto</h2>
+                    <div class="editForm">
+                        <input type="hidden" id="edit_id_producto">
+                        <label for="edit_nombre">Nombre: </label>
+                        <input type="text" id="edit_nombre" placeholder="Ingrese el nombre">
+                        <label for="edit_precio">Precio: </label>
+                        <input type="number" id="edit_precio" placeholder="Ingrese el precio">
+                        <label for="edit_categoria">Seleccione la categoria: </label>
+                        <select id="edit_categoria"></select>
+                    </div>
+                    <label>
+                        <input type="checkbox" id="edit_activo"> Activo
+                    </label>
+                    <button onclick="guardarProducto()">Guardar</button>
+                </div>
+            </div>
+
+            <div id="modalCrearProducto" class="modal">
+                <div class="modal_content">
+                    <span class="cerrarProveedor" onclick="cerrarModal('modalCrearProducto')">&times;</span>
+                    <h2>Crear Producto</h2>
+
+                    <div class="editForm">
+                        <label>Nombre:</label>
+                        <input type="text" id="crear_nombre" placeholder="Ingrese el nombre">
+
+                        <label>Precio:</label>
+                        <input type="number" id="crear_precio" placeholder="Ingrese el precio">
+
+                        <label>Categoría:</label>
+                        <select id="crear_categoria"></select>
+                    </div>
+
+                    <label>
+                        <input type="checkbox" id="crear_activo" checked> Activo
+                    </label>
+
+                    <button onclick="crearProducto()">Crear</button>
+                </div>
+            </div>
         </div>
     </main>
-    <script type="module" src="../js/homeAdminScripts.js"></script>
+    <script type="module" src="../../../js/AdminScripts/adminInventario.js"></script>
     <script type="module" src="../../../js/globalScripts.js"></script>
 </body>
 </html>
