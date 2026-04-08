@@ -103,10 +103,6 @@ input {
     animation: aparecerModal 0.25s ease;
 }
 
- {
-    width: 90%;
-}
-
 /* Animación */
 @keyframes aparecerModal {
     from {
