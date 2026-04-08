@@ -320,13 +320,13 @@ const guardarPedido = async () => {
         .insert([
             {
                 fecha: new Date().toISOString(),
-                tipo: "compraLocal",
+                tipo: "local",
                 costo_domicilio: null,
                 total: total,
                 servicio_mesa: 3000,
                 id_usuario: usuario.id_usuario,
                 estado: true,
-                id_mesa: numMesa.value   // 👈 AQUÍ ESTÁ LA MAGIA
+                id_mesa: parseInt(numMesa.value.replace("mesa", ""))
             }
         ])
         .select();
