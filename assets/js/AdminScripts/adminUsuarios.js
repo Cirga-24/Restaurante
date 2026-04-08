@@ -11,65 +11,62 @@ botonesEliminar.forEach(boton => {
 
 //Cargar tarjetas de meseros desde el backend
 const contenedor = document.querySelector(".mostrar_meseros");
-try {
-    const cargarUsuarios = async () => {
-        const { data, error } = await supabase
-            .from("usuario")
-            .select("*");
 
-        if (error) {
-            console.error("Error al cargar usuarios:", error);
-            return;
+const cargarUsuarios = async () => {
+    const { data, error } = await supabase
+        .from("usuario")
+        .select("*");
+
+    if (error) {
+        console.error("Error al cargar usuarios:", error);
+        return;
+    }
+
+    contenedor.innerHTML = "";
+
+    data.forEach(usuario => {
+        const card = document.createElement("div");
+        card.classList.add("mesero_card");
+        let password = usuario.password;
+        let tipoUsuario = "";
+        let numero = "";
+        let correo = "";
+        if (usuario.tipo_usuario === true) {
+            tipoUsuario = "Administrador";
+        } else if (usuario.tipo_usuario === false) {
+            tipoUsuario = "Mesero";
         }
 
-        contenedor.innerHTML = "";
+        if (usuario.telefono === "") {
+            numero = "Número no proporcionado";
+        } else {
+            numero = usuario.telefono;
+        }
 
-        data.forEach(usuario => {
-            const card = document.createElement("div");
-            card.classList.add("mesero_card");
-            let password = usuario.password;
-            let tipoUsuario = "";
-            let numero = "";
-            let correo = "";
-            if (usuario.tipo_usuario === true) {
-                tipoUsuario = "Administrador";
-            } else if (usuario.tipo_usuario === false) {
-                tipoUsuario = "Mesero";
-            }
+        if (usuario.correo === null || usuario.correo === "") {
+            correo = "Correo no proporcionado";
+        } else {
+            correo = usuario.correo;
+        }
 
-            if (usuario.telefono === "") {
-                numero = "Número no proporcionado";
-            } else {
-                numero = usuario.telefono;
-            }
+        card.innerHTML = `
+            <div class="mesero_info">
+                <h2 class="name">Nombre: ${usuario.username}</h2>
+                <p class="phone">Teléfono: ${numero}</p>
+                <p class="email">Correo: ${correo}</p>
+                <p class="tipo">Tipo: ${tipoUsuario}</p>
+                <p class="tipo">Contraseña: ${password}</p>
+            </div>
+            <div class="mesero_options">
+                <button class="delete-button">Eliminar</button>
+                <button class="edit-button">Editar</button>
+            </div>
+        `;
 
-            if (usuario.correo === null || usuario.correo === "") {
-                correo = "Correo no proporcionado";
-            } else {
-                correo = usuario.correo;
-            }
-
-            card.innerHTML = `
-                <div class="mesero_info">
-                    <h2 class="name">Nombre: ${usuario.username}</h2>
-                    <p class="phone">Teléfono: ${numero}</p>
-                    <p class="email">Correo: ${correo}</p>
-                    <p class="tipo">Tipo: ${tipoUsuario}</p>
-                    <p class="tipo">Contraseña: ${password}</p>
-                </div>
-                <div class="mesero_options">
-                    <button class="delete-button">Eliminar</button>
-                    <button class="edit-button">Editar</button>
-                </div>
-            `;
-
-            contenedor.appendChild(card);
-        });
-    };
-    cargarUsuarios();
-} catch (error) {
-    console.error("Error al cargar usuarios:", error);
+        contenedor.appendChild(card);
+    });
 };
+cargarUsuarios();
 
 //Eliminar usuario al hacer click en el botón eliminar, 
 // verificando que no sea un administrador
@@ -132,30 +129,43 @@ document.getElementById("btn_crear").addEventListener("click", async () => {
 
 
 //Editar Usuario
-document.addEventListener("click", async (e) => {
-    if (e.target.classList.contains("edit-button")) {
+document.getElementById("btn_guardar_edicion").addEventListener("click", async () => {
 
-        const tarjeta = e.target.closest(".mesero_card");
-        const nombre = tarjeta.querySelector(".name").textContent.replace("Nombre: ", "");
+    const nombreOriginal = document.getElementById("editId").value;
 
-        const nuevoTelefono = prompt("Nuevo teléfono:");
-        const nuevoCorreo = prompt("Nuevo correo:");
+    const username = document.getElementById("editNombre").value;
+    const telefono = document.getElementById("editTelefono").value;
+    const correo = document.getElementById("editCorreo").value;
+    const password = document.getElementById("editPassword").value;
 
-        if (!nuevoTelefono && !nuevoCorreo) return;
+    const datosActualizados = {
+        username,
+        telefono,
+        correo
+    };
 
-        const { error } = await supabase
-            .from("usuario")
-            .update({
-                telefono: nuevoTelefono,
-                correo: nuevoCorreo
-            })
-            .eq("username", nombre);
-
-        if (!error) {
-            alert("Usuario actualizado");
-            location.reload();
-        }
+    // 👉 solo actualizar password si el usuario escribe algo
+    if (password !== "") {
+        datosActualizados.password = password;
     }
+
+    const { error } = await supabase
+        .from("usuario")
+        .update(datosActualizados)
+        .eq("username", nombreOriginal);
+
+    if (error) {
+        console.error(error);
+        alert("Error al actualizar usuario");
+        return;
+    }
+
+    alert("Usuario actualizado correctamente");
+
+    modalEditar.style.display = "none";
+
+    // recargar tarjetas
+    cargarUsuarios();
 });
 
 //Crear usuario
@@ -187,4 +197,40 @@ function limpiarModal() {
 cerrar.addEventListener("click", () => {
     modal.style.display = "none";
     limpiarModal();
+});
+
+const modalEditar = document.getElementById("modalEditar");
+
+document.addEventListener("click", (e) => {
+    if (e.target.classList.contains("edit-button")) {
+
+        const tarjeta = e.target.closest(".mesero_card");
+
+        const nombre = tarjeta.querySelector(".name").textContent.replace("Nombre: ", "");
+        const telefono = tarjeta.querySelector(".phone").textContent.replace("Teléfono: ", "");
+        const correo = tarjeta.querySelector(".email").textContent.replace("Correo: ", "");
+
+        // Llenar inputs
+        document.getElementById("editNombre").value = nombre;
+        document.getElementById("editTelefono").value = telefono;
+        document.getElementById("editCorreo").value = correo;
+        document.getElementById("editPassword").value = "";
+
+        // Guardar referencia (por ahora username)
+        document.getElementById("editId").value = nombre;
+
+        modalEditar.style.display = "flex";
+    }
+});
+
+const cerrarEditar = document.querySelector(".cerrarEditar");
+
+cerrarEditar.addEventListener("click", () => {
+    modalEditar.style.display = "none";
+});
+
+window.addEventListener("click", (e) => {
+    if (e.target === modalEditar) {
+        modalEditar.style.display = "none";
+    }
 });

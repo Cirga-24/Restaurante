@@ -34,17 +34,32 @@
                 </div>
             </div>
         </div>
+        
         <div id="modalAgregar" class="modal">
             <div class="modal_content">
                 <span class="cerrar">&times;</span>
                 <h2>Agregar Usuario</h2>
-
                 <input type="text" id="nuevoNombre" placeholder="Usuario">
                 <input type="text" id="nuevoTelefono" placeholder="Teléfono">
                 <input type="email" id="nuevoCorreo" placeholder="Correo">
                 <input type="password" id="nuevoPassword" placeholder="Contraseña">
-
                 <button id="btn_crear">Crear Usuario</button>
+            </div>
+        </div>
+        <div id="modalEditar" class="modal">
+            <div class="modal_content">
+                <span class="cerrarEditar">&times;</span>
+                <h2>Editar Usuario</h2>
+
+                <!-- ID oculto (recomendado usarlo luego) -->
+                <input type="hidden" id="editId">
+
+                <input type="text" id="editNombre" placeholder="Usuario">
+                <input type="text" id="editTelefono" placeholder="Teléfono">
+                <input type="email" id="editCorreo" placeholder="Correo">
+                <input type="password" id="editPassword" placeholder="Nueva contraseña (opcional)">
+
+                <button id="btn_guardar_edicion">Guardar Cambios</button>
             </div>
         </div>
     </main>
