@@ -10,7 +10,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Home Admin</title>
-    <!--<link rel="stylesheet" href="../../../css/registrarVentaStyles.css" />-->
+    <link rel="stylesheet" href="../../../css/AdminStyles/adminUsuarios.css" />
     <link rel="stylesheet" href="../../../css/menuLateralStyles.css" />
 </head>
 <body>
@@ -19,10 +19,21 @@
 
     <main>
         <div id="card_principal" class="card_principal">
-        
+            <div class="mostrar_meseros">
+                <div id="mesero" class="mesero_card">
+                    <div class="mesero_info">
+                        <h2 id="name_card" class="name">Nombre: </h2>
+                        <p id="phone_card" class="phone">Numero Telefonico: </p>
+                        <p id="email_card" class="email">Correo Electrónico: </p>
+                    </div>
+                    <div class="mesero_options">
+                        <button class="delete-button">Eliminar</button>
+                    </div>
+                </div>
+            </div>
         </div>
     </main>
-    <!--<script type="module" src="../js/homeAdminScripts.js"></script> -->
+    <script type="module" src="../../../js/AdminScripts/adminUsuarios.js"></script>
     <script type="module" src="../../../js/globalScripts.js"></script>
 </body>
 </html>
