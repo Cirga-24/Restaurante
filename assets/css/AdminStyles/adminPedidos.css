@@ -98,3 +98,19 @@
 .btn_hecho:hover {
     background: #388e3c;
 }
+
+.btn_cancelar {
+    margin-top: 15px;
+    padding: 10px;
+    border: none;
+    border-radius: 10px;
+    background: #af4c4c;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.btn_cancelar:hover {
+    background: #af4c4c;
+}
