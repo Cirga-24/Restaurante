@@ -64,6 +64,7 @@ document.addEventListener("click", async (e) => {
         const { data, error } = await supabase
             .from("detalle_pedido")
             .select(`
+                id_pedido,
                 cantidad,
                 precio_unitario,
                 subtotal,

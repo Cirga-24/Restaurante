@@ -10,7 +10,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Home Admin</title>
-    <link rel="stylesheet" href="../../../css/registrarVentaStyles.css" />
+    <link rel="stylesheet" href="../../../css/AdminStyles/adminReportes.css" />
     <link rel="stylesheet" href="../../../css/menuLateralStyles.css" />
 </head>
 <body>
@@ -18,11 +18,22 @@
     <div id="menu-container"></div>
 
     <main>
+        
         <div id="card_principal" class="card_principal">
+            <!-- FILTROS -->
+            <div class="filtros">
+                <input type="date" id="fechaInicio">
+                <input type="date" id="fechaFin">
+                <button id="btn_filtrar">Filtrar</button>
+            </div>
+
+            <!-- Cards -->
+            <div id="lista_pedidos" class="lista_pedidos"></div>
+
             
         </div>
     </main>
-    <script type="module" src="../../../js/homeAdminScripts.js"></script>
+    <script type="module" src="../../../js/AdminScripts/adminReportes.js"></script>
     <script type="module" src="../../../js/globalScripts.js"></script>
 </body>
 </html>
