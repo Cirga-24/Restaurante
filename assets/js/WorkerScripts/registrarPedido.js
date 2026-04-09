@@ -100,7 +100,9 @@ function actualizarCarrito() {
                 <span class="item_subtotal">$${(item.precio * item.cantidad).toFixed(2)}</span>
                 <button class="btn_eliminar" data-index="${index}">-</button>
                 <button class="btn_add" data-index="${index}" 
-                    data-producto="${item.nombre}" data-precio="${item.precio}">+</button>
+                    data-id="${item.id}"
+                    data-producto="${item.nombre}" 
+                    data-precio="${item.precio}">+</button>
             </div>
         `;
     });
@@ -116,9 +118,9 @@ function actualizarCarrito() {
 
     document.querySelectorAll('.btn_add').forEach(btn => {
         btn.addEventListener('click', function() {
-            const id = e.target.dataset.id;
-            const producto = e.target.dataset.producto;
-            const precio = parseFloat(e.target.dataset.precio);
+            const id = this.dataset.id;
+            const producto = this.producto;
+            const precio = parseFloat(this.dataset.precio);
 
             agregarAlCarrito(id, producto, precio);
         });
@@ -155,11 +157,9 @@ document.querySelector('.btn_completar').addEventListener('click', async functio
 
     if (!confirm('¿Enviar pedido?')) return;
 
-    // 🔥 1. guardar pedido
     const pedido = await guardarPedido();
     if (!pedido) return;
 
-    // 🔥 2. guardar detalle
     const detalleOK = await guardarDetallePedido(pedido.id_pedido);
     if (!detalleOK) return;
 
@@ -168,25 +168,11 @@ document.querySelector('.btn_completar').addEventListener('click', async functio
     carrito = [];
     actualizarCarrito();
 
-    const usuario = JSON.parse(localStorage.getItem("usuario"));
-
-    if (usuario.tipo_usuario) {
-        window.location.replace('/assets/pages/homeAdmin.html');
-    } else {
-        window.location.replace('/assets/pages/homeWorker.html');
-    }
+    window.location.replace('../../homeWorker.html');
 });
 
 // Búsqueda de productos
 const filtroCategoria = document.getElementById('filtroCategoria');
-const categorias = ['hamburguesas', 'pizzas', 'ensaladas', 'pastas', 'bebidas', 'postres'];
-
-categorias.forEach(cat => {
-    const option = document.createElement('option');
-    option.value = cat;
-    option.textContent = cat.charAt(0).toUpperCase() + cat.slice(1);
-    filtroCategoria.appendChild(option);
-});
 
 filtroCategoria.addEventListener('change', function() {
     const categoria = this.value;

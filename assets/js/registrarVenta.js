@@ -79,7 +79,7 @@ let carrito = [];
 document.addEventListener("click", (e) => {
     if (e.target.classList.contains("btn_agregar")) {
 
-        if (e.target.disabled) return; // 👈 bloquea si está deshabilitado
+        if (e.target.disabled) return;
 
         const tipo = tipoServicio.value;
 
@@ -232,13 +232,7 @@ document.querySelector('.btn_completar').addEventListener('click', async functio
     carrito = [];
     actualizarCarrito();
 
-    const usuario = JSON.parse(localStorage.getItem("usuario"));
-
-    if (usuario.tipo_usuario) {
-        window.location.replace('dashboardAdmin.html');
-    } else {
-        window.location.replace('../pages/homeWorker.html');
-    }
+    window.location.replace('dashboardAdmin.html');
 
 });
 
