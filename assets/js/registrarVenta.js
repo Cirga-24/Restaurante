@@ -217,12 +217,10 @@ document.querySelector('.btn_completar').addEventListener('click', async functio
         return;
     }
 
-    // 🔥 1. Guardar pedido
     const pedido = await guardarPedido();
 
     if (!pedido) return;
 
-    // 🔥 2. Guardar detalle
     const detalleGuardado = await guardarDetallePedido(pedido.id_pedido);
 
     if (!detalleGuardado) return;
@@ -369,7 +367,7 @@ const guardarPedido = async () => {
     const costoDom = parseFloat(document.getElementById('costo_domicilio').value) || 0;
 
     const subtotal = carrito.reduce((sum, item) => sum + (item.precio * item.cantidad), 0);
-
+    const fecha = localStorage.dateActual;
     let total = 0;
     let servicioMesa = 0;
 
@@ -378,7 +376,7 @@ const guardarPedido = async () => {
         servicioMesa = 3000;
         total = subtotal + servicioMesa;
     } else if (tipo === 'domicilio') {
-        tipoEnviar = 'docmicilio';
+        tipoEnviar = 'domicilio';
         total = subtotal + costoDom;
     }
 
@@ -386,7 +384,7 @@ const guardarPedido = async () => {
         .from("pedido")
         .insert([
             {
-                fecha: new Date().toISOString(),
+                fecha: fecha,
                 tipo: tipoEnviar,
                 costo_domicilio: tipo === 'domicilio' ? costoDom : null,
                 total: total,

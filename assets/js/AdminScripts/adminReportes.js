@@ -1,6 +1,9 @@
 import { supabase } from '../supabaseConexion.js';
 
 const contenedor = document.getElementById('lista_pedidos');
+const hoy = new Date().toISOString().split("T")[0];
+document.getElementById("fechaInicio").max = hoy;
+document.getElementById("fechaFin").max = hoy;
 
 const cargarPedidos = async (fechaInicio = null, fechaFin = null) => {
 
@@ -117,8 +120,29 @@ document.addEventListener("click", async (e) => {
 cargarPedidos();
 
 document.getElementById("btn_filtrar").addEventListener("click", () => {
+
     const inicio = document.getElementById("fechaInicio").value;
     const fin = document.getElementById("fechaFin").value;
 
+    if (!inicio || !fin) {
+        alert("Seleccione ambas fechas");
+        return;
+    }
+
+    if (inicio > fin) {
+        alert("La fecha inicial no puede ser mayor a la final");
+        return;
+    }
+
     cargarPedidos(inicio, fin);
+    document.getElementById("fechaInicio").value = "";
+    document.getElementById("fechaFin").value = "";
+});
+
+document.getElementById("fechaInicio").addEventListener("change", function() {
+    document.getElementById("fechaFin").min = this.value;
+});
+
+document.getElementById("fechaFin").addEventListener("change", function() {
+    document.getElementById("fechaInicio").max = this.value;
 });
