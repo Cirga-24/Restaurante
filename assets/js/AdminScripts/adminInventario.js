@@ -181,6 +181,7 @@ const cargarCategorias = async () => {
 window.abrirEditarProducto = async (id, nombre, precio, categoriaId, activo) => {
     
     await cargarCategorias();
+    cargarIngredientesSelect();
 
     productoOriginal = {
         nombre,
@@ -194,6 +195,35 @@ window.abrirEditarProducto = async (id, nombre, precio, categoriaId, activo) => 
     document.getElementById('edit_precio').value = precio;
     document.getElementById('edit_categoria').value = categoriaId || '';
     document.getElementById('edit_activo').checked = !!activo;
+
+    // TRAER INGREDIENTES DEL PRODUCTO
+    const { data, error } = await supabase
+        .from('producto_ingrediente')
+        .select(`
+            id_ingrediente,
+            cantidad_usada,
+            ingrediente (
+                nombre,
+                unidad_medida
+            )
+        `)
+        .eq('id_producto', id);
+
+    if (error) {
+        console.error(error);
+        alert("Error cargando ingredientes");
+        return;
+    }
+
+    //CARGAR EN EL ARRAY
+    ingredientesSeleccionados = data.map(i => ({
+        id: i.id_ingrediente,
+        nombre: i.ingrediente.nombre,
+        unidad: i.ingrediente.unidad_medida,
+        cantidad: i.cantidad_usada
+    }));
+
+    renderIngredientes();
 
     document.getElementById('modalEditarProducto').style.display = 'flex';
 };
@@ -242,6 +272,46 @@ window.guardarProducto = async () => {
     if (error) {
         console.error(error);
         alert("Error al actualizar");
+        return;
+    }
+
+    //ELIMINAR RELACIONES ANTERIORES
+    const { error: deleteError } = await supabase
+        .from('producto_ingrediente')
+        .delete()
+        .eq('id_producto', id);
+
+    if (deleteError) {
+        console.error(deleteError);
+        alert("Error limpiando ingredientes");
+        return;
+    }
+
+    //VALIDAR
+    if (ingredientesSeleccionados.length === 0) {
+        alert("Debes dejar al menos un ingrediente");
+        return;
+    }
+
+    if (ingredientesSeleccionados.some(i => i.cantidad <= 0)) {
+        alert("Cantidad inválida en ingredientes");
+        return;
+    }
+
+    // INSERTAR NUEVOS
+    const inserts = ingredientesSeleccionados.map(ing => ({
+        id_producto: id,
+        id_ingrediente: ing.id,
+        cantidad_usada: ing.cantidad
+    }));
+
+    const { error: insertError } = await supabase
+        .from('producto_ingrediente')
+        .insert(inserts);
+
+    if (insertError) {
+        console.error(insertError);
+        alert("Error guardando ingredientes");
         return;
     }
 
@@ -305,6 +375,11 @@ window.abrirCrearProducto = async () => {
         `;
     });
 
+    // AGREGA ESTO
+    cargarIngredientesSelect();
+    ingredientesSeleccionados = [];
+    renderIngredientes();
+
     document.getElementById('crear_nombre').value = '';
     document.getElementById('crear_precio').value = '';
     document.getElementById('crear_activo').checked = true;
@@ -328,14 +403,28 @@ window.crearProducto = async () => {
         return;
     }
 
-    const { error } = await supabase
+    //VALIDAR INGREDIENTES
+    if (ingredientesSeleccionados.length === 0) {
+        alert("Debes agregar al menos un ingrediente");
+        return;
+    }
+
+    if (ingredientesSeleccionados.some(i => i.cantidad <= 0)) {
+        alert("Todos los ingredientes deben tener cantidad válida");
+        return;
+    }
+
+    // CREAR PRODUCTO
+    const { data: nuevoProducto, error } = await supabase
         .from('producto')
         .insert([{
             nombre: nombre,
             precio: precio,
             id_categoria: categoria,
             activo: activo
-        }]);
+        }])
+        .select()
+        .single();
 
     if (error) {
         console.error(error);
@@ -343,8 +432,32 @@ window.crearProducto = async () => {
         return;
     }
 
+    // PREPARAR INGREDIENTES
+    const inserts = ingredientesSeleccionados.map(ing => ({
+        id_producto: nuevoProducto.id_producto,
+        id_ingrediente: ing.id,
+        cantidad_usada: ing.cantidad
+    }));
+
+    // INSERTAR EN producto_ingrediente
+    const { error: errorIngredientes } = await supabase
+        .from('producto_ingrediente')
+        .insert(inserts);
+
+    if (errorIngredientes) {
+        console.error(errorIngredientes);
+        alert("Error guardando ingredientes");
+        return;
+    }
+
+    //LIMPIAR
+    ingredientesSeleccionados = [];
+    renderIngredientes();
+
     cerrarModal('modalCrearProducto');
     cargarProductos();
+
+    alert("✅ Producto creado con ingredientes");
 };
 
 document.querySelector('.btn_agregar').addEventListener('click', () => {
@@ -478,4 +591,98 @@ window.guardarIngrediente = async () => {
 
     cerrarModal('modalEditarIngrediente');
     cargarInventario();
+};
+
+let ingredientesSeleccionados = [];
+
+const cargarIngredientesSelect = () => {
+    const select = document.getElementById('select_ingrediente');
+
+    select.innerHTML = '<option value="">Seleccionar ingrediente</option>';
+
+    inventarioData.forEach(i => {
+        select.innerHTML += `
+            <option value="${i.id_ingrediente}">
+                ${i.nombre} (${i.unidad_medida})
+            </option>
+        `;
+    });
+};
+
+const renderIngredientes = () => {
+
+    const contenedor = document.getElementById('lista_ingredientes');
+    contenedor.innerHTML = '';
+
+    ingredientesSeleccionados.forEach((ing, index) => {
+        const tabActiva = obtenerTabActiva();
+
+        if (tabActiva === 'productos') {
+            contenedor.innerHTML += `
+                    <div class="item_ingrediente">
+                        <span>${ing.nombre} (${ing.unidad}) = </span>
+                        <label> ${ing.cantidad} </label>
+                    </div>
+                `;
+        } else {
+                contenedor.innerHTML += `
+                    <div class="item_ingrediente">
+                        <span>${ing.nombre} (${ing.unidad})</span>
+
+                        <input 
+                            type="number" 
+                            placeholder="Cantidad"
+                            value="${ing.cantidad}"
+                            onchange="actualizarCantidad(${index}, this.value)"
+                        >
+
+                        <button onclick="eliminarIngredienteSeleccionado(${index})">
+                            x
+                        </button>
+                    </div>
+                `;
+            }
+    });
+};
+
+document.getElementById('select_ingrediente')
+.addEventListener('change', (e) => {
+
+    const id = e.target.value;
+
+    if (!id) return;
+
+    const ingrediente = inventarioData.find(i => i.id_ingrediente == id);
+
+    // evitar duplicados
+    if (ingredientesSeleccionados.some(i => i.id == id)) {
+        alert("Ya agregaste este ingrediente");
+        e.target.value = "";
+        return;
+    }
+
+    if (ingredientesSeleccionados.some(i => i.cantidad <= 0)) {
+        alert("Primero ingresa una cantidad válida para el ingrediente");
+        return;
+    }
+
+    ingredientesSeleccionados.push({
+        id: id,
+        nombre: ingrediente.nombre,
+        unidad: ingrediente.unidad_medida,
+        cantidad: 0
+    });
+
+    renderIngredientes();
+
+    e.target.value = "";
+});
+
+window.actualizarCantidad = (index, valor) => {
+    ingredientesSeleccionados[index].cantidad = Number(valor);
+};
+
+window.eliminarIngredienteSeleccionado = (index) => {
+    ingredientesSeleccionados.splice(index, 1);
+    renderIngredientes();
 };
