@@ -1,4 +1,3 @@
-
 // Mostrar fecha actual
 try {
     const fechaActual = new Date();
@@ -66,7 +65,3 @@ document.addEventListener("DOMContentLoaded", () => {
 } } catch (error) {
     console.error('No se pudo cargar el menú lateral:');
 };
-
-
-const fecha = new Date().toISOString();
-localStorage.setItem("dateActual", fecha);

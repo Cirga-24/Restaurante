@@ -24,6 +24,24 @@ const cargarPedidos = async () => {
     mostrarPedidos(data);
 };
 
+supabase
+    .channel('realtime-pedidos')
+    .on(
+        'postgres_changes',
+        {
+        event: '*', // escucha INSERT, UPDATE y DELETE
+        schema: 'public',
+        table: 'pedido'
+        },
+        (payload) => {
+        console.log('Cambio en pedidos:', payload);
+
+        // Recargar pedidos automáticamente
+        cargarPedidos();
+        }
+    )
+    .subscribe();
+
 const mostrarPedidos = (pedidos) => {
 
     if (!pedidos || pedidos.length === 0) {
@@ -54,7 +72,7 @@ const mostrarPedidos = (pedidos) => {
                 </select>
 
                 <button class="btn_hecho" data-id="${p.id_pedido}">
-                    ✅ Marcar como hecho
+                    Marcar como hecho
                 </button>
                 <button class="btn_cancelar" data-id="${p.id_pedido}">
                     Cancelar Pedido
@@ -65,39 +83,6 @@ const mostrarPedidos = (pedidos) => {
 
     contenedor.innerHTML = html;
 };
-
-document.addEventListener("click", async (e) => {
-    if (e.target.classList.contains("btn_ver_detalle")) {
-
-        const id = e.target.dataset.id;
-
-        const { data, error } = await supabase
-            .from("detalle_pedido")
-            .select(`
-                id_pedido,
-                cantidad,
-                precio_unitario,
-                subtotal,
-                producto (
-                    nombre
-                )
-            `)
-            .eq("id_pedido", id);
-
-        if (error) {
-            console.error("Error cargando detalle:", error);
-            return;
-        }
-
-        let detalle = "🧾 Detalle:\n";
-
-        data.forEach(item => {
-            detalle += `- ${item.producto?.nombre} x${item.cantidad} = $${item.subtotal}\n`;
-        });
-
-        alert(detalle);
-    }
-});
 
 document.addEventListener("click", async (e) => {
     if (e.target.classList.contains("btn_hecho")) {
@@ -138,6 +123,8 @@ document.addEventListener("click", async (e) => {
             alert("Error al registrar venta");
             return;
         }
+
+        await descontarInventario(id);
 
         const { error: errorUpdate } = await supabase
             .from("pedido")
@@ -188,5 +175,74 @@ document.addEventListener("click", async (e) => {
         cargarPedidos();
     }
 });
+
+const descontarInventario = async (id_pedido) => {
+
+    // Traer detalle del pedido
+    const { data: detalles, error } = await supabase
+        .from("detalle_pedido")
+        .select("id_producto, cantidad")
+        .eq("id_pedido", id_pedido);
+
+    if (error) {
+        console.error("Error obteniendo detalle:", error);
+        return;
+    }
+
+    // Procesar cada producto
+    for (const item of detalles) {
+
+        let productosAProcesar = [];
+
+        // PROMOS
+        if (item.id_producto == 68) {
+            // Promo familiar
+            productosAProcesar.push(
+                { id: 15, cantidad: 1 },
+                { id: 16, cantidad: 1 },
+                { id: 28, cantidad: 1 },
+                { id: 109, cantidad: 1 }
+            );
+        } else if (item.id_producto == 69) {
+            productosAProcesar.push(
+                { id: 13, cantidad: 1 },
+                { id: 14, cantidad: 1 },
+                { id: 48, cantidad: 2 },
+                { id: 109, cantidad: 1 }
+            );
+        } else {
+            // Producto normal
+            productosAProcesar.push({
+                id: item.id_producto,
+                cantidad: item.cantidad
+            });
+        }
+
+        // Procesar cada producto
+        for (const prod of productosAProcesar) {
+
+            const { data: ingredientes } = await supabase
+                .from("producto_ingrediente")
+                .select("id_ingrediente, cantidad_usada")
+                .eq("id_producto", prod.id);
+
+            for (const ing of ingredientes) {
+
+                const cantidadTotal = ing.cantidad_usada * prod.cantidad;
+
+                // DESCONTAR INVENTARIO
+                const { error } = await supabase.rpc("descontar_ingrediente", {
+                    p_id_ingrediente: ing.id_ingrediente,
+                    p_cantidad: cantidadTotal
+                });
+
+                if (error) {
+                    console.error("ERROR RPC:", error);
+                }
+            }
+        }
+    }
+};
+
 
 cargarPedidos();

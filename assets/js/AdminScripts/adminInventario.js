@@ -55,7 +55,7 @@ const cargarInventario = async () => {
         return;
     }
 
-    inventarioData = data; // 👈 guardar datos
+    inventarioData = data;
     renderInventario(data);
 };
 
@@ -141,11 +141,9 @@ tabs.forEach(tab => {
         tab.classList.add('active');
         document.getElementById(tab.dataset.tab).classList.add('active');
 
-        // 🔥 limpiar buscador
         const buscador = document.getElementById('buscador_general');
         buscador.value = '';
 
-        // 🔥 restaurar datos
         if (tab.dataset.tab === 'productos') {
             renderProductos(productosData);
         } else {
@@ -184,7 +182,6 @@ window.abrirEditarProducto = async (id, nombre, precio, categoriaId, activo) => 
     
     await cargarCategorias();
 
-    // 🔥 guardar valores originales
     productoOriginal = {
         nombre,
         precio,
@@ -215,8 +212,13 @@ window.guardarProducto = async () => {
         datos.nombre = nombre;
     }
 
-    if (precio && parseFloat(precio) !== productoOriginal.precio) {
-        datos.precio = parseFloat(precio);
+    if (precio && parseFloat(precio) > 100) {
+        if (parseFloat(precio) !== productoOriginal.precio) {
+            datos.precio = parseFloat(precio);
+        }
+    } else {
+        alert("Precio debe ser un número mayor a 100");
+        return;
     }
 
     if (categoria && parseInt(categoria) !== productoOriginal.categoriaId) {
@@ -264,15 +266,36 @@ window.eliminarProducto = async (id) => {
         console.error(error);
         alert("Error al eliminar");
         return;
+    } else {
+        alert("Producto eliminado correctamente");
     }
 
     cargarProductos();
 };
 
-window.abrirCrearProducto = async () => {
-    await cargarCategorias(); // reutilizamos
+window.eliminarIngrediente = async (id) => {
+    const confirmar = confirm("¿Seguro que quieres eliminar este ingrediente?");
+    if (!confirmar) return;
 
-    // llenar select del crear
+    const { error } = await supabase
+        .from('ingrediente')
+        .delete()
+        .eq('id_ingrediente', id);
+
+    if (error) {
+        console.error(error);
+        alert("Error al eliminar");
+        return;
+    } else {
+        alert("Ingrediente eliminado correctamente");
+    }
+
+    cargarInventario();
+};
+
+window.abrirCrearProducto = async () => {
+    await cargarCategorias();
+
     const select = document.getElementById('crear_categoria');
     select.innerHTML = '';
 
@@ -282,7 +305,6 @@ window.abrirCrearProducto = async () => {
         `;
     });
 
-    // limpiar inputs
     document.getElementById('crear_nombre').value = '';
     document.getElementById('crear_precio').value = '';
     document.getElementById('crear_activo').checked = true;
@@ -298,6 +320,11 @@ window.crearProducto = async () => {
 
     if (!nombre || !precio) {
         alert("Completa los campos");
+        return;
+    }
+
+    if (parseFloat(precio) <= 100) {
+        alert("Precio debe ser un número mayor a 100");
         return;
     }
 
@@ -321,7 +348,7 @@ window.crearProducto = async () => {
 };
 
 document.querySelector('.btn_agregar').addEventListener('click', () => {
-    cerrarTodosLosModales(); // 👈 clave
+    cerrarTodosLosModales();
 
     const tabActiva = obtenerTabActiva();
 
@@ -350,7 +377,7 @@ window.crearIngrediente = async () => {
     if (!nombre || !unidad) {
         alert("Completa los campos básicos");
         return;
-    }
+    }    
 
     const { error } = await supabase
         .from('ingrediente')
@@ -415,12 +442,22 @@ window.guardarIngrediente = async () => {
         datos.unidad_medida = unidad;
     }
 
-    if (stockActual && Number(stockActual) !== ingredienteOriginal.stockActual) {
-        datos.stock_actual = Number(stockActual);
+    if (stockActual && Number(stockActual) > 0) {
+        if (Number(stockActual) !== ingredienteOriginal.stockActual) {
+            datos.stock_actual = Number(stockActual);
+        }
+    } else {
+        alert("Stock actual debe ser un número mayor a 0");
+        return;
     }
 
-    if (stockMinimo && Number(stockMinimo) !== ingredienteOriginal.stockMinimo) {
-        datos.stock_minimo = Number(stockMinimo);
+    if (stockMinimo && Number(stockMinimo) > 0) {
+        if (Number(stockMinimo) !== ingredienteOriginal.stockMinimo){
+            datos.stock_minimo = Number(stockMinimo);
+        }
+    } else {
+        alert("Stock mínimo debe ser un número mayor a 0");
+        return;
     }
 
     if (Object.keys(datos).length === 0) {

@@ -1,11 +1,11 @@
 import { supabase } from './supabaseConexion.js';
 
 const checkUser = () => {
-  const usuario = JSON.parse(localStorage.getItem("usuario"));
+    const usuario = JSON.parse(localStorage.getItem("usuario"));
 
-  if (!usuario) {
-    window.location.href = "../../index.html";
-  }
+    if (!usuario) {
+        window.location.href = "../../index.html";
+    }
 };
 
 checkUser();
@@ -79,7 +79,7 @@ let carrito = [];
 document.addEventListener("click", (e) => {
     if (e.target.classList.contains("btn_agregar")) {
 
-        if (e.target.disabled) return;
+        if (e.target.disabled) return; // 👈 bloquea si está deshabilitado
 
         const tipo = tipoServicio.value;
 
@@ -88,29 +88,31 @@ document.addEventListener("click", (e) => {
             return;
         }
 
-        const id = e.target.dataset.id;
         const producto = e.target.dataset.producto;
         const precio = parseFloat(e.target.dataset.precio);
 
-        agregarAlCarrito(id,producto, precio);
+        agregarAlCarrito(producto, precio);
     }
 });
 
 
 
-function agregarAlCarrito(id, producto, precio) {
-    const itemExistente = carrito.find(item => item.id === id);
-
+function agregarAlCarrito(producto, precio) {
+    const itemExistente = carrito.find(item => item.nombre === producto);
+    
     if (itemExistente) {
         itemExistente.cantidad++;
     } else {
-        carrito.push({ id: id, nombre: producto, precio: precio, cantidad: 1 });
+        carrito.push({ nombre: producto, precio: precio, cantidad: 1 });
     }
 
-    // limpiar búsqueda...
+    //LIMPIAR BÚSQUEDA
     document.getElementById('buscarProducto').value = '';
+
+    //LIMPIAR CATEGORÍA
     document.getElementById('filtroCategoria').value = '';
 
+    //MOSTRAR TODOS LOS PRODUCTOS
     document.querySelectorAll('.producto_item').forEach(item => {
         item.style.display = 'flex';
     });
@@ -138,9 +140,7 @@ function actualizarCarrito() {
                 <span class="item_subtotal">$${(item.precio * item.cantidad).toFixed(2)}</span>
                 <button class="btn_eliminar" data-index="${index}">-</button>
                 <button class="btn_add" data-index="${index}" 
-                    data-id="${item.id}"
-                    data-producto="${item.nombre}" 
-                    data-precio="${item.precio}">+</button>
+                    data-producto="${item.nombre}" data-precio="${item.precio}">+</button>
             </div>
         `;
     });
@@ -156,11 +156,9 @@ function actualizarCarrito() {
 
     document.querySelectorAll('.btn_add').forEach(btn => {
         btn.addEventListener('click', function() {
-            const id = this.dataset.id;
             const producto = this.dataset.producto;
             const precio = parseFloat(this.dataset.precio);
-
-            agregarAlCarrito(id, producto, precio);
+            agregarAlCarrito(producto, precio);
         });
     });
 
@@ -200,38 +198,25 @@ document.querySelector('.btn_limpiar').addEventListener('click', function() {
     actualizarCarrito();
 });
 
-document.querySelector('.btn_completar').addEventListener('click', async function() {
-
+document.querySelector('.btn_completar').addEventListener('click', function() {
     if (carrito.length === 0) {
         alert('Por favor, agregue al menos un producto');
         return;
-    }
-
-    if (tipoServicio.value === '') {
-        alert('Seleccione un tipo de servicio');
+    } else if (document.getElementById('tipoServicio').value === '') {
+        alert('Por favor, seleccione un tipo de servicio');
+        return;
+    } else if (document.getElementById('tipoServicio').value === 'domicilio' && document.getElementById('costo_domicilio').value === '') {
+        alert('Por favor, ingrese el costo de domicilio');
         return;
     }
-
-    if (tipoServicio.value === 'domicilio' && !costoDomicilio.value) {
-        alert('Ingrese costo de domicilio');
-        return;
+    
+    const usuario = JSON.parse(localStorage.getItem("usuario"));
+    alert('Venta completada. Total: ' + document.getElementById('total').textContent);
+    if (usuario.tipo_usuario) {
+        window.location.replace('/assets/pages/homeAdmin.html');
+    } else {
+        window.location.replace('/assets/pages/homeWorker.html');
     }
-
-    const pedido = await guardarPedido();
-
-    if (!pedido) return;
-
-    const detalleGuardado = await guardarDetallePedido(pedido.id_pedido);
-
-    if (!detalleGuardado) return;
-
-    alert('✅ Pedido completo guardado correctamente');
-
-    carrito = [];
-    actualizarCarrito();
-
-    window.location.replace('dashboardAdmin.html');
-
 });
 
 // Búsqueda de productos
@@ -347,7 +332,6 @@ const cargarProductos = async () => {
             </div>
             <span class="producto_precio">$${prod.precio}</span>
             <button class="btn_agregar" 
-                data-id="${prod.id_producto}"
                 data-producto="${prod.nombre}" 
                 data-precio="${prod.precio}"
                 disabled>
@@ -357,75 +341,6 @@ const cargarProductos = async () => {
 
         productosList.appendChild(div);
     });
-};
-
-const guardarPedido = async () => {
-    const usuario = JSON.parse(localStorage.getItem("usuario"));
-
-    const tipo = tipoServicio.value;
-    let tipoEnviar = '';
-    const costoDom = parseFloat(document.getElementById('costo_domicilio').value) || 0;
-
-    const subtotal = carrito.reduce((sum, item) => sum + (item.precio * item.cantidad), 0);
-    const fecha = localStorage.dateActual;
-    let total = 0;
-    let servicioMesa = 0;
-
-    if (tipo === 'compraLocal') {
-        tipoEnviar = 'local';
-        servicioMesa = 3000;
-        total = subtotal + servicioMesa;
-    } else if (tipo === 'domicilio') {
-        tipoEnviar = 'domicilio';
-        total = subtotal + costoDom;
-    }
-
-    const { data, error } = await supabase
-        .from("pedido")
-        .insert([
-            {
-                fecha: fecha,
-                tipo: tipoEnviar,
-                costo_domicilio: tipo === 'domicilio' ? costoDom : null,
-                total: total,
-                servicio_mesa: tipo === 'compraLocal' ? servicioMesa : null,
-                id_usuario: usuario.id_usuario,
-                estado: true,
-                id_mesa: null
-            }
-        ])
-        .select();
-
-    if (error) {
-        console.error("Error guardando pedido:", error);
-        alert("Error al guardar el pedido");
-        return null;
-    }
-
-    return data[0];
-};
-
-const guardarDetallePedido = async (idPedido) => {
-
-    const detalles = carrito.map(item => ({
-        id_pedido: idPedido,
-        id_producto: item.id,
-        cantidad: item.cantidad,
-        precio_unitario: item.precio,
-        subtotal: item.precio * item.cantidad
-    }));
-
-    const { error } = await supabase
-        .from("detalle_pedido")
-        .insert(detalles);
-
-    if (error) {
-        console.error("Error guardando detalle:", error);
-        alert("Error guardando productos del pedido");
-        return false;
-    }
-
-    return true;
 };
 
 cargarCategorias();

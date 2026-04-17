@@ -1,0 +1,14 @@
+INSERT INTO categoria (nombre) VALUES ('Entrada');
+INSERT INTO categoria (nombre) VALUES ('Menu Infantil');
+INSERT INTO categoria (nombre) VALUES ('Menu vegetariano');
+INSERT INTO categoria (nombre) VALUES ('Hamburguesas');
+INSERT INTO categoria (nombre) VALUES ('Papas fritas');
+INSERT INTO categoria (nombre) VALUES ('Platos especiales');
+INSERT INTO categoria (nombre) VALUES ('Sandwiches');
+INSERT INTO categoria (nombre) VALUES ('Hot Dog');
+INSERT INTO categoria (nombre) VALUES ('Platos fuertes');
+INSERT INTO categoria (nombre) VALUES ('Picada');
+INSERT INTO categoria (nombre) VALUES ('Promociones');
+INSERT INTO categoria (nombre) VALUES ('Adiciones');
+INSERT INTO categoria (nombre) VALUES ('Postres');
+INSERT INTO categoria (nombre) VALUES ('Bebidas');
