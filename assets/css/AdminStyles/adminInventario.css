@@ -18,7 +18,7 @@
     cursor: pointer;
     border-radius: 10px 10px 0 0;
     width: 200px;
-    transition: all 1ms ease-in-out;
+    transition: all 0.2s ease-in-out;
     border-bottom: 2px solid #ffffff;
 }
 
@@ -26,8 +26,18 @@
     background: #ffc954;
     font-weight: bold;
     border-bottom: 2px solid rgb(0, 0, 0);
-    color: white;
+    color: rgb(0, 0, 0);
     width: 200px;
+}
+
+.tab_btn:hover {
+    background: #ffc954;
+    color: black;
+    font-weight: bold;
+    border-bottom: 2px solid rgb(0, 0, 0);
+    transform: translateY(-5px);
+    padding-top: 12px;          
+    padding-bottom: 8px;         
 }
 
 .tab_content {
@@ -215,7 +225,7 @@ input {
     width: 30%;
     height: 40px;
     background: transparent;
-    border: solid 2px rgb(102, 241, 102);
+    border: solid 2px rgb(70, 141, 70);
     cursor: pointer;
     transition: all 0.2s ease-in-out;
     border-radius: 5px;
@@ -223,16 +233,18 @@ input {
 }
 
 .btn_agregar:hover {
-    background: rgb(102, 241, 102);
+    background: rgb(70, 141, 70);
     transform: translateY(-5px);
     color: white;
+    font-weight: bold;
+    font-size: 10px;
 }
 
 .btn_editar {
     width: 90%;
     height: 40px;
     background: transparent;
-    border: solid 2px rgb(232, 240, 119);
+    border: solid 2px rgb(218, 185, 65);
     cursor: pointer;
     transition: all 0.2s ease-in-out;
     border-radius: 5px;
@@ -240,15 +252,18 @@ input {
 }
 
 .btn_editar:hover {
-    background: rgb(232, 240, 119);
+    background: rgb(218, 185, 65);
     transform: translateY(-5px);
+    color: white;
+    font-weight: bold;
+    font-size: 10px;
 }
 
 .btn_eliminar {
     width: 90%;
     height: 40px;
     background: transparent;
-    border: solid 2px rgb(240, 119, 119);
+    border: solid 2px rgb(172, 65, 65);
     cursor: pointer;
     transition: all 0.2s ease-in-out;
     border-radius: 5px;
@@ -256,6 +271,9 @@ input {
 }
 
 .btn_eliminar:hover {
-    background: rgb(240, 119, 119);
-    transform: translateY(-5px);
+    background: rgb(172, 65, 65);
+    transform: translateY(-3px);
+    color: white;
+    font-weight: bold;
+    font-size: 10px;
 }
