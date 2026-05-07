@@ -28,7 +28,6 @@ for (let i = 1; i <= 10; i++) {
     numMesa.appendChild(option);
 }
 
-const costoDomicilio = document.getElementById('costo_domicilio');
 const botonesAgregar = document.querySelectorAll('.btn_agregar');
 botonesAgregar.forEach(btn => btn.disabled = true);
 

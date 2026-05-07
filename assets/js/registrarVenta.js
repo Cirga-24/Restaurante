@@ -79,7 +79,7 @@ let carrito = [];
 document.addEventListener("click", (e) => {
     if (e.target.classList.contains("btn_agregar")) {
 
-        if (e.target.disabled) return; // 👈 bloquea si está deshabilitado
+        if (e.target.disabled) return; 
 
         const tipo = tipoServicio.value;
 
@@ -88,22 +88,23 @@ document.addEventListener("click", (e) => {
             return;
         }
 
+        const id = e.target.dataset.id;
         const producto = e.target.dataset.producto;
         const precio = parseFloat(e.target.dataset.precio);
 
-        agregarAlCarrito(producto, precio);
+        agregarAlCarrito(id, producto, precio);
     }
 });
 
 
 
-function agregarAlCarrito(producto, precio) {
-    const itemExistente = carrito.find(item => item.nombre === producto);
+function agregarAlCarrito(id, producto, precio) {
+    const itemExistente = carrito.find(item => item.id === id);
     
     if (itemExistente) {
         itemExistente.cantidad++;
     } else {
-        carrito.push({ nombre: producto, precio: precio, cantidad: 1 });
+        carrito.push({ id: id, nombre: producto, precio: precio, cantidad: 1 });
     }
 
     //LIMPIAR BÚSQUEDA
@@ -140,7 +141,9 @@ function actualizarCarrito() {
                 <span class="item_subtotal">$${(item.precio * item.cantidad).toFixed(2)}</span>
                 <button class="btn_eliminar" data-index="${index}">-</button>
                 <button class="btn_add" data-index="${index}" 
-                    data-producto="${item.nombre}" data-precio="${item.precio}">+</button>
+                    data-id="${item.id}"
+                    data-producto="${item.nombre}" 
+                    data-precio="${item.precio}">+</button>
             </div>
         `;
     });
@@ -156,9 +159,10 @@ function actualizarCarrito() {
 
     document.querySelectorAll('.btn_add').forEach(btn => {
         btn.addEventListener('click', function() {
+            const id = this.dataset.id;
             const producto = this.dataset.producto;
             const precio = parseFloat(this.dataset.precio);
-            agregarAlCarrito(producto, precio);
+            agregarAlCarrito(id, producto, precio);
         });
     });
 
@@ -198,26 +202,120 @@ document.querySelector('.btn_limpiar').addEventListener('click', function() {
     actualizarCarrito();
 });
 
-document.querySelector('.btn_completar').addEventListener('click', function() {
+document.querySelector('.btn_completar').addEventListener('click', async function() {
+
     if (carrito.length === 0) {
-        alert('Por favor, agregue al menos un producto');
-        return;
-    } else if (document.getElementById('tipoServicio').value === '') {
-        alert('Por favor, seleccione un tipo de servicio');
-        return;
-    } else if (document.getElementById('tipoServicio').value === 'domicilio' && document.getElementById('costo_domicilio').value === '') {
-        alert('Por favor, ingrese el costo de domicilio');
+        alert('Agregue productos');
         return;
     }
-    
-    const usuario = JSON.parse(localStorage.getItem("usuario"));
-    alert('Venta completada. Total: ' + document.getElementById('total').textContent);
-    if (usuario.tipo_usuario) {
-        window.location.replace('/assets/pages/homeAdmin.html');
-    } else {
-        window.location.replace('/assets/pages/homeWorker.html');
+
+    if (!confirm('¿Enviar pedido?')) return;
+
+    const pedido = await guardarPedido();
+    if (!pedido) {
+        alert("Error al guardar el pedido");
+        return;
     }
+
+    const detalleOK = await guardarDetallePedido(pedido.id_pedido);
+    if (!detalleOK) {
+        alert("Error al guardar el detalle del pedido");
+        return;
+    }
+
+    alert("✅ Pedido registrado con éxito");
+
+    carrito = [];
+    actualizarCarrito();
+
+    window.location.replace('dashboardAdmin.html');
 });
+
+const guardarPedido = async () => {
+    const usuario = JSON.parse(localStorage.getItem("usuario"));
+
+    const subtotal = carrito.reduce((sum, item) => sum + (item.precio * item.cantidad), 0);
+
+    if (tipoServicio.value === 'domicilio' && costoDomicilio.value) { 
+        const total = subtotal + (parseFloat(costoDomicilio.value));
+        const { data, error } = await supabase
+            .from("pedido")
+            .insert([
+                {
+                    fecha: new Date().toISOString(),
+                    tipo: "domicilio",
+                    costo_domicilio: parseFloat(costoDomicilio.value),
+                    total: total,
+                    servicio_mesa: null,
+                    id_usuario: usuario.id_usuario,
+                    estado: true,
+                    id_mesa: null
+                }
+            ])
+            .select();
+
+        if (error) {
+            console.error("Error guardando pedido:", error);
+            alert("Error al guardar pedido");
+            return null;
+        }
+
+        return data[0];
+    } else if (tipoServicio.value === 'domicilio' && costoDomicilio.value === '') {
+        alert('Ingrese el costo del domicilio');
+        return;
+    }
+
+    if (tipoServicio.value === 'compraLocal') {
+        const total = subtotal + 3000;
+        const { data, error } = await supabase
+            .from("pedido")
+            .insert([
+                {
+                    fecha: new Date().toISOString(),
+                    tipo: "local",
+                    costo_domicilio: null,
+                    total: total,
+                    servicio_mesa: 3000,
+                    id_usuario: usuario.id_usuario,
+                    estado: true,
+                    id_mesa: null
+                }
+            ])
+            .select();
+
+            if (error) {
+                console.error("Error guardando pedido:", error);
+                alert("Error al guardar pedido");
+                return null;
+            }
+
+            return data[0];
+    }
+};
+
+const guardarDetallePedido = async (idPedido) => {
+
+    const detalles = carrito.map(item => ({
+        id_pedido: idPedido,
+        id_producto: item.id,
+        cantidad: item.cantidad,
+        precio_unitario: item.precio,
+        subtotal: item.precio * item.cantidad
+    }));
+
+    const { error } = await supabase
+        .from("detalle_pedido")
+        .insert(detalles);
+
+    if (error) {
+        console.error("Error guardando detalle:", error);
+        alert("Error guardando detalle");
+        return false;
+    }
+
+    return true;
+};
 
 // Búsqueda de productos
 const filtroCategoria = document.getElementById('filtroCategoria');
@@ -309,7 +407,7 @@ const cargarProductos = async () => {
                 nombre
             )
         `)
-        .eq("activo", true); // 👈 solo productos activos
+        .eq("activo", true);
 
     if (error) {
         console.error("Error cargando productos:", error);
@@ -322,7 +420,6 @@ const cargarProductos = async () => {
         const div = document.createElement("div");
         div.classList.add("producto_item");
 
-        // 👇 guardamos el ID de la categoría (MEJOR que nombre)
         div.dataset.categoria = prod.id_categoria;
 
         div.innerHTML = `
@@ -332,6 +429,7 @@ const cargarProductos = async () => {
             </div>
             <span class="producto_precio">$${prod.precio}</span>
             <button class="btn_agregar" 
+                data-id="${prod.id_producto}"
                 data-producto="${prod.nombre}" 
                 data-precio="${prod.precio}"
                 disabled>
