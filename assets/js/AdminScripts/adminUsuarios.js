@@ -15,7 +15,8 @@ const contenedor = document.querySelector(".mostrar_meseros");
 const cargarUsuarios = async () => {
     const { data, error } = await supabase
         .from("usuario")
-        .select("*");
+        .select("*")
+        .order("tipo_usuario", { ascending: false });
 
     if (error) {
         console.error("Error al cargar usuarios:", error);
@@ -55,7 +56,6 @@ const cargarUsuarios = async () => {
                 <p class="phone">Teléfono: ${numero}</p>
                 <p class="email">Correo: ${correo}</p>
                 <p class="tipo">Tipo: ${tipoUsuario}</p>
-                <p class="tipo">Contraseña: ${password}</p>
             </div>
             <div class="mesero_options">
                 <button class="delete-button">Eliminar</button>
@@ -119,7 +119,11 @@ document.getElementById("btn_crear").addEventListener("click", async () => {
 
     if (error) {
         console.error(error);
-        alert("Error al crear usuario");
+        if (error.code === "23505") {
+            alert("El nombre de usuario ya existe");
+        } else {
+            alert("Error al crear usuario");
+        }
         return;
     }
 

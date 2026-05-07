@@ -277,3 +277,21 @@ input {
     font-weight: bold;
     font-size: 10px;
 }
+
+.stock_bajo {
+    background-color: #ffb3b3;
+    color: #8b0000;
+    font-weight: bold; 
+    button.btn_editar {
+        background: rgb(243, 234, 109);
+        color: white;
+        border: none;
+        color: black;
+    }
+    button.btn_eliminar {
+        background: rgb(168, 65, 65);
+        color: white;
+        border: none;
+    }
+    
+}

@@ -10,7 +10,8 @@ const usuario = localStorage.getItem("usuario");
 const cargarProveedores = async () => {
     const { data, error } = await supabase
         .from("proveedor")
-        .select("*");
+        .select("*")
+        .order("id_proveedor", { ascending: true });
 
     if (error) {
         console.error(error);

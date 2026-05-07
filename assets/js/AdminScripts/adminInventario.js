@@ -48,7 +48,8 @@ const cargarProductos = async () => {
 const cargarInventario = async () => {
     const { data, error } = await supabase
         .from('ingrediente')
-        .select('*');
+        .select('*')
+        .order('stock_actual', { ascending: true });
 
     if (error) {
         console.error(error);
@@ -87,8 +88,11 @@ const renderInventario = (data) => {
     tabla.innerHTML = '';
 
     data.forEach(i => {
+
+    const stockBajo = i.stock_actual < i.stock_minimo;
+
         tabla.innerHTML += `
-        <tr>
+        <tr class="${stockBajo ? 'stock_bajo' : ''}">
             <td>${i.id_ingrediente}</td>
             <td>${i.nombre}</td>
             <td>${i.unidad_medida}</td>
@@ -305,10 +309,10 @@ window.abrirCrearProducto = async () => {
         `;
     });
 
-    // 🔥 AGREGA ESTO
+    /*
     cargarIngredientesSelect();
     ingredientesSeleccionados = [];
-    renderIngredientes();
+    renderIngredientes();*/
 
     document.getElementById('crear_nombre').value = '';
     document.getElementById('crear_precio').value = '';
@@ -348,6 +352,8 @@ window.crearProducto = async () => {
         console.error(error);
         alert("Error al crear producto");
         return;
+    } else {
+        alert("Producto creado correctamente");
     }
 
     cerrarModal('modalCrearProducto');
@@ -489,7 +495,7 @@ window.guardarIngrediente = async () => {
 
 let ingredientesSeleccionados = [];
 
-const cargarIngredientesSelect = () => {
+/*const cargarIngredientesSelect = () => {
     const select = document.getElementById('select_ingrediente');
 
     select.innerHTML = '<option value="">Seleccionar ingrediente</option>';
@@ -506,7 +512,6 @@ const cargarIngredientesSelect = () => {
 const renderIngredientes = () => {
 
     const contenedor = document.getElementById('lista_ingredientes');
-    contenedor.innerHTML = '';
 
     ingredientesSeleccionados.forEach((ing, index) => {
 
@@ -529,8 +534,7 @@ const renderIngredientes = () => {
     });
 };
 
-document.getElementById('select_ingrediente')
-.addEventListener('change', (e) => {
+document.getElementById('select_ingrediente').addEventListener('change', (e) => {
 
     const id = e.target.value;
 
@@ -569,4 +573,4 @@ window.actualizarCantidad = (index, valor) => {
 window.eliminarIngredienteSeleccionado = (index) => {
     ingredientesSeleccionados.splice(index, 1);
     renderIngredientes();
-};
+}; */
