@@ -210,7 +210,10 @@ document.querySelector('.btn_completar').addEventListener('click', async functio
     }
 
     if (!confirm('¿Enviar pedido?')) return;
-
+    if (tipoServicio.value === 'domicilio' && costoDomicilio.value === '') {
+        alert('Ingrese el costo del domicilio');
+        return;
+    } 
     const pedido = await guardarPedido();
     if (!pedido) {
         alert("Error al guardar el pedido");
@@ -235,7 +238,6 @@ const guardarPedido = async () => {
     const usuario = JSON.parse(localStorage.getItem("usuario"));
 
     const subtotal = carrito.reduce((sum, item) => sum + (item.precio * item.cantidad), 0);
-
     if (tipoServicio.value === 'domicilio' && costoDomicilio.value) { 
         const total = subtotal + (parseFloat(costoDomicilio.value));
         const { data, error } = await supabase
@@ -261,9 +263,6 @@ const guardarPedido = async () => {
         }
 
         return data[0];
-    } else if (tipoServicio.value === 'domicilio' && costoDomicilio.value === '') {
-        alert('Ingrese el costo del domicilio');
-        return;
     }
 
     if (tipoServicio.value === 'compraLocal') {
