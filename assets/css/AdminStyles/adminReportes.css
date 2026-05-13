@@ -96,7 +96,8 @@
 }
 
 /* BOTÓN */
-.btn_ver_detalle {
+.btn_ver_detalle,
+.btn_factura {
     margin-top: 15px;
     padding: 10px;
     border: none;
@@ -109,7 +110,8 @@
     transition: 0.2s;
 }
 
-.btn_ver_detalle:hover {
+.btn_ver_detalle:hover,
+.btn_factura:hover {
     background: #8e7d38;
     color: white;
 }
